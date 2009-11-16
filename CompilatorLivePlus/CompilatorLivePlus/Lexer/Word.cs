@@ -3,7 +3,7 @@ using System.Text;
 
 namespace CompilatorLivePlus.Lexer
 {
-    class Word : Token
+    public class Word : Token
     {
         private string lexeme;
         public string Lexeme
@@ -13,6 +13,10 @@ namespace CompilatorLivePlus.Lexer
         public Word(int t, string s): base(t)
         {
             lexeme = s;
+        }
+        public override string ToString()
+        {
+            return lexeme.ToString();
         }
     }
 }

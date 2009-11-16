@@ -1,15 +1,17 @@
 ﻿using System;
+using System.IO;
 using System.Text;
 
 namespace CompilatorLivePlus.Lexer
 {
     class Lexer
     {
+        static FileStream file;
+        StreamReader sr;
+        
         public int line = 1;
         private char peek;
         private Hashtable words = new Hashtable();
-        public int[][] regras;
-        public int[] finals;
 
         void reserve(Word t)
         {
@@ -17,6 +19,10 @@ namespace CompilatorLivePlus.Lexer
         }
         public Lexer()
         {
+
+            sr = new StreamReader(new FileStream("entrada_lexico.txt", FileMode.OpenOrCreate, FileAccess.Read));
+            
+
             reserve(new Word((int)Tag.TRUE, "true"));
             reserve(new Word((int)Tag.FALSE, "false"));
             reserve(new Word((int)Tag.PROGRAM, "program"));
@@ -48,19 +54,18 @@ namespace CompilatorLivePlus.Lexer
         }
         public Token scan()
         {
-
-            for (; ; peek = (char)Program.sr.Read())
+            for (; ; peek = (char) sr.Read())
             {
                 if (Character.isWhiteSpace(peek) || Character.isTabSpace(peek) || Character.isLineFeed(peek)) continue;
                 if (peek == 47) // char / comentario
                 {
-                    peek = (char)Program.sr.Read();
+                    peek = (char)sr.Read();
 
                     if (peek == 47) // char 
                     {
                         while (!Character.isCarriegeReturn(peek))
                         {
-                            peek = (char)Program.sr.Read();
+                            peek = (char)sr.Read();
                         }
                     }
                     else
@@ -69,9 +74,6 @@ namespace CompilatorLivePlus.Lexer
                 if (Character.isCarriegeReturn(peek))
                 {
                     line = line + 1;
-#if TesteLexico
-                    Console.WriteLine(" ");
-#endif
                 }
 
                 else break;
@@ -79,38 +81,38 @@ namespace CompilatorLivePlus.Lexer
             switch ((int)peek)
             {
                 case 61: // char =
-                    peek = (char)Program.sr.Read();
+                    peek = (char)sr.Read();
                     if ((int)peek == 61)
                     {
-                        peek = (char)Program.sr.Read();
+                        peek = (char)sr.Read();
                         return new Word((int)Tag.EQUAL, "==");
                     }
                     else
                         return new Token(61);
                 case 33: // char !
-                    peek = (char)Program.sr.Read();
+                    peek = (char)sr.Read();
                     if ((int)peek == 61)
                     {
-                        peek = (char)Program.sr.Read();
+                        peek = (char)sr.Read();
                         return new Word((int)Tag.NEQUAL, "!=");
                     }
                     else
                         return new Token(33);
 
                 case 60: // char <
-                    peek = (char)Program.sr.Read();
+                    peek = (char)sr.Read();
                     if ((int)peek == 61)
                     {
-                        peek = (char)Program.sr.Read();
+                        peek = (char)sr.Read();
                         return new Word((int)Tag.LEQUAL, "<=");
                     }
                     else
                         return new Token(60);
                 case 62: // char >
-                    peek = (char)Program.sr.Read();
+                    peek = (char)sr.Read();
                     if ((int)peek == 61)
                     {
-                        peek = (char)Program.sr.Read();
+                        peek = (char)sr.Read();
                         return new Word((int)Tag.GEQUAL, ">=");
                     }
                     else
@@ -123,7 +125,7 @@ namespace CompilatorLivePlus.Lexer
                 do
                 {
                     v = 10 * v + (peek - 48);
-                    peek = (char)Program.sr.Read();
+                    peek = (char)sr.Read();
                 } while (Character.isDigit(peek));
                 return new Num(v);
             }
@@ -133,42 +135,32 @@ namespace CompilatorLivePlus.Lexer
                 do
                 {
                     bufStr = bufStr + peek.ToString();
-                    peek = (char)Program.sr.Read();
+                    peek = (char)sr.Read();
                 } while (Character.isLetterOrDigit(peek));
 
                 Word w = (Word)words.getElement(bufStr);
                 if (w != null) return w;
+
                 w = new Word((int)Tag.ID, bufStr);
                 words.Add(bufStr, w);
                 return w;
 
             }
             Token t = new Token(peek);
-            peek = (char)Program.sr.Read();
+            peek = (char)sr.Read();
             return t;
 
         }
-
-        public void loadRulez()
+        public bool hasEnded()
         {
-            regras = new int[300][];
-            finals = new int[2];
-            finals[1] = 13;
-            finals[0] = 13;
-
-            regras[0] = new int[300];
-            regras[1] = new int[300];
-            regras[4] = new int[300];
-            regras[6] = new int[300];
-
-            //regras[0] = new int[(int)Tag.ID + 1];
-            regras[0][(int)Tag.ID] = 0;
-            //regras[0] = new int[(int)Tag.PROGRAM + 1];
-            regras[0][(int)Tag.PROGRAM] = 4;
-            //regras[4] = new int[(int)Tag.ID + 1];
-            regras[4][(int)Tag.ID] = 6;
-            //regras[6] = new int[(int)Tag.THEN + 1];
-            regras[6][(int)Tag.THEN] = 8;
+            if (!sr.EndOfStream)
+                return false;
+            else
+            {
+                sr.Close();
+                file.Close();
+                return true;
+            }
         }
     }
 }

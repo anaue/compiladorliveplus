@@ -44,8 +44,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="APE\Automaton.cs" />
+    <Compile Include="APE\StackAutomaton.cs" />
+    <Compile Include="APE\SubmachineCall.cs" />
     <Compile Include="Input\Automaton.cs" />
     <Compile Include="Hashtable.cs" />
+    <Compile Include="APE\State.cs" />
+    <Compile Include="APE\Transition.cs" />
     <Compile Include="Lexer\Lexer.cs" />
     <Compile Include="Lexer\Num.cs" />
     <Compile Include="Lexer\ReservedWord.cs" />
@@ -55,6 +60,7 @@
     <Compile Include="Lexer\Token.cs" />
     <Compile Include="Lexer\Word.cs" />
     <Compile Include="Character.cs" />
+    <Compile Include="Sintatic\Sintatic.cs" />
     <Compile Include="Symbols\Env.cs" />
     <Compile Include="Input\Input.cs" />
   </ItemGroup>

@@ -8,7 +8,7 @@ namespace CompilatorLivePlus
     class Program
     {
 
-        public static string[] words;
+        //public static string[] words;
         static FileStream file;
         public static StreamReader sr;
         static FileStream rulez;

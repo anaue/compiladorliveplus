@@ -30,12 +30,22 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'TesteLexico|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\TesteLexico\</OutputPath>
+    <DefineConstants>TRACE;TESTELEXICO</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Input\Automaton.cs" />
+    <Compile Include="Hashtable.cs" />
     <Compile Include="Lexer\Lexer.cs" />
     <Compile Include="Lexer\Num.cs" />
     <Compile Include="Lexer\ReservedWord.cs" />
@@ -44,7 +54,13 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Lexer\Token.cs" />
     <Compile Include="Lexer\Word.cs" />
-    <Compile Include="Util.cs" />
+    <Compile Include="Character.cs" />
+    <Compile Include="Symbols\Env.cs" />
+    <Compile Include="Input\Input.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Input\entrada_lexico.txt" />
+    <Content Include="regras-codigo.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

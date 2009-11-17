@@ -14,9 +14,5 @@ namespace CompilatorLivePlus.Lexer
         {
             lexeme = s;
         }
-        public override string ToString()
-        {
-            return lexeme.ToString();
-        }
     }
 }

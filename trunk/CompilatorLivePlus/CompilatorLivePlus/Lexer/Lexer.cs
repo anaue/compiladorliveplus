@@ -158,7 +158,7 @@ namespace CompilatorLivePlus.Lexer
             else
             {
                 sr.Close();
-                file.Close();
+                //file.Close();
                 return true;
             }
         }

@@ -9,11 +9,12 @@ namespace CompilatorLivePlus.Symbols
     public class Env
     {
         private Hashtable table;
-        protected Env anterior;
+        public Env Previous;
+        public int CloseScope;
         public Env(Env n)
         {
             table = new Hashtable();
-            anterior = n;
+            Previous  = n;
         }
         public void put(Token w, string id)
         {
@@ -21,9 +22,9 @@ namespace CompilatorLivePlus.Symbols
         }
         public string get(Token w)
         {
-            for (Env e = this; e != null; e = e.anterior)
+            for (Env e = this; e != null; e = e.Previous)
             {
-                string found = (string)(e.table.getChave(w));
+                string found = (string)(e.table.getChave(w.ToString()));
                 if (found != null)
                     return found;
             }

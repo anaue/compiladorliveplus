@@ -1,5 +1,5 @@
 program
-    fatorial_num = != == ! < > <= >= int,
+    fatorial_num int,
     fatorial_res int
 begin
     input fatorial_num;  // comentario

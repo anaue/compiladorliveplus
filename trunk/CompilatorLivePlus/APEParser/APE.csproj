@@ -55,6 +55,7 @@
     <Compile Include="Model\State.cs" />
     <Compile Include="Model\SubmachineCall.cs" />
     <Compile Include="Model\Transition.cs" />
+    <Compile Include="Recognizer\Recognizer.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -31,7 +31,7 @@ namespace CompilatorLivePlus.Input
         }
         public bool hasNext()
         {
-            return (level >= next);
+            return (level > next);
         }
         public void resetNext()
         {

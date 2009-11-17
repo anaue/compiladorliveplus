@@ -20,15 +20,18 @@ namespace CompilatorLivePlus
         {
             _hashTable[funcHash(chave)] = obj;
         }
-        public string getChave(object obj)
+        public string getChave(string obj)
         {
             string chave = "";
-            for (int indice = 0; indice < _tamTable;indice++)
+            for (int indice = 0; indice < _tamTable; indice++)
             {
                 if (_hashTable[indice] != null)
                 {
-                    if (((Token)_hashTable[indice]).ToString().Equals(obj))
-                        chave = ((Token)_hashTable[indice]).tag.ToString();
+                    if (_hashTable[indice].GetType() == Type.GetType("Word"))
+                    {
+                        if (((Word)_hashTable[indice]).Lexeme == obj)
+                            chave = ((Word)_hashTable[indice]).tag.ToString();
+                    }
                 }
             }
             return chave;

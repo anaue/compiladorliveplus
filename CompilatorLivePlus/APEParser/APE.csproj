@@ -3,17 +3,15 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{9FBA60E1-5E83-4F09-8E95-3342FF1A2BA2}</ProjectGuid>
+    <ProjectGuid>{43F86D01-DF12-4C91-839D-35D407E22FAA}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CompilatorLivePlus</RootNamespace>
-    <AssemblyName>CompilatorLivePlus</AssemblyName>
-    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <RootNamespace>APEParser</RootNamespace>
+    <AssemblyName>APEParser</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <TargetZone>LocalIntranet</TargetZone>
-    <GenerateManifests>true</GenerateManifests>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -32,49 +30,31 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'TesteLexico|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\TesteLexico\</OutputPath>
-    <DefineConstants>TRACE;TESTELEXICO</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'TesteAPEParser|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\TesteAPEParser\</OutputPath>
-    <DefineConstants>TRACE;TESTELEXICO</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Xml.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data.DataSetExtensions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Input\Automaton.cs" />
-    <Compile Include="Hashtable.cs" />
-    <Compile Include="Lexer\Lexer.cs" />
-    <Compile Include="Lexer\Num.cs" />
-    <Compile Include="Lexer\ReservedWord.cs" />
-    <Compile Include="Parser.cs" />
+    <Compile Include="Model\ReservedWord.cs" />
+    <Compile Include="Model\Token.cs" />
+    <Compile Include="Parser\APEParser.cs" />
+    <Compile Include="Model\Automaton.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Lexer\Token.cs" />
-    <Compile Include="Lexer\Word.cs" />
-    <Compile Include="Character.cs" />
-    <Compile Include="Sintatic\Sintatic.cs" />
-    <Compile Include="Symbols\Env.cs" />
-    <Compile Include="Input\Input.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Input\entrada_lexico.txt" />
-    <Content Include="regras-codigo.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="app.config" />
+    <Compile Include="Model\StackAutomaton.cs" />
+    <Compile Include="Model\State.cs" />
+    <Compile Include="Model\SubmachineCall.cs" />
+    <Compile Include="Model\Transition.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

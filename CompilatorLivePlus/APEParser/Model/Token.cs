@@ -9,6 +9,7 @@ namespace APE.Lexer
 
         public Token(String ttag)
         {
+            ttag = ttag.ToUpper();
             string[] names = Enum.GetNames(typeof(Tag));
             bool tagFound = false;
             switch (ttag)
@@ -45,16 +46,21 @@ namespace APE.Lexer
                     throw new ApplicationException("Token " + ttag + " not found.");
             }
         }
-        
+
         public Token(int t)
         {
             tag = t;
         }
 
         public override string ToString()
-        {    
+        {
             return tag.ToString();
         }
-    }
 
+        public override bool Equals(object obj)
+        {
+            return ((Token)obj).tag == tag;
+        }
+
+    }
 }

@@ -10,6 +10,12 @@ namespace APE.Model
         public List<Automaton> Automata;
         public Automaton Start;
 
+        public StackAutomaton()
+        {
+            Automata = new List<Automaton>();
+        }
+
+
         public StackAutomaton(Automaton startAutomaton)
         {
             Automata = new List<Automaton>();
@@ -27,7 +33,7 @@ namespace APE.Model
             StringBuilder str = new StringBuilder();
             foreach (Automaton at in Automata)
             {
-                str = new StringBuilder("Automato: " + at.Name);
+                str.AppendLine("Automato: " + at.Name);
                 str.AppendLine("\nEstado Inicial: " + at.Start.Id);
                 foreach (State st in at.States)
                 {

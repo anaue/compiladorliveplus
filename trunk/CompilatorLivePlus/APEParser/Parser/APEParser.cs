@@ -10,56 +10,131 @@ namespace APE.Parser
     public class APEParser
     {
         private StreamReader _text;
+        public static StackAutomaton stackAutomaton;
 
-        public APEParser(string sourceFilePath)
+        public APEParser()
         {
-            _text = File.OpenText(sourceFilePath);
+            
         }
 
-        public StackAutomaton GetAutomaton()
+        public StackAutomaton ParseFromRoot(string root)
         {
+            root = root.ToUpper();
+            stackAutomaton = new StackAutomaton();
+            stackAutomaton.addAutomaton(GetAutomaton(root));
+            stackAutomaton.Start = stackAutomaton.Automata.Find(In => In.Name == root);
+            return stackAutomaton;
+        }
+
+        public StackAutomaton GetStackAutomaton()
+        {
+            if (stackAutomaton != null)
+                return stackAutomaton;
+            else
+            {
+                return ParseFromRoot("comando");
+            }
+        }
+
+        public Automaton GetAutomaton(string AName)
+        {
+            AName = AName.ToUpper();
+            if (stackAutomaton.Automata.Count != 0 && stackAutomaton.Automata.Exists(In => In.Name == AName))
+                return stackAutomaton.Automata.Find(In => In.Name == AName);
+            else
+            {
+                string path = String.Empty;
+                return ParseAutomaton(AName, path);
+            }
+        }
+
+        private Automaton ParseAutomaton(string AName, string path)
+        {
+            _text = File.OpenText(AName + ".txt");
+
             string name = TokenizeField("name:")[1].Trim().ToUpper();
             Automaton automaton = new Automaton(name, ParseInitialState());
-            StackAutomaton ape = new StackAutomaton(automaton);
-            ParseFinalStates(ape, name);
-            ParseTransitions(ape, name);
+            ParseFinalStates(automaton);
+            ParseTransitions(automaton);
 
-            return new StackAutomaton(automaton);
+            return automaton;
         }
 
-        private void ParseTransitions(StackAutomaton ape, string currentAutomatonName)
+        private void ParseTransitions(Automaton automaton)
         {
             string currentLine;
 
             while(!_text.EndOfStream){
-                currentLine = _text.ReadLine().Trim();
+                currentLine = _text.ReadLine().Trim().Replace("\",\"", "_COMMA").Replace("\"\"\"", "_QUOTE");
                 if (!currentLine.Equals(String.Empty))
                 {
-                    State temp;
+                    State currentState;
+                    State nextState;
                     string left = currentLine.Split(new char[] { '-', '>' }, StringSplitOptions.RemoveEmptyEntries)[0];
-                    string nextState = currentLine.Split(new char[] { '-', '>' }, StringSplitOptions.RemoveEmptyEntries)[1];
+                    string nextStateNumber = currentLine.Split(new char[] { '-', '>' }, StringSplitOptions.RemoveEmptyEntries)[1];
                     int nextNum;
-                    if (Int32.TryParse(nextState, out nextNum))
+                    if (Int32.TryParse(nextStateNumber, out nextNum))
                     {
+                        bool newState = false;
+                        bool newNextState = false;
                         string[] pair = left.Trim().Trim('(',')').Split(new char[] {',',' '}, StringSplitOptions.RemoveEmptyEntries);
                         int currentStateNum;
                         if(Int32.TryParse(pair[0], out currentStateNum)){
-                            temp = new State(currentStateNum);
-                            if (pair[1].Contains("\""))
+
+                            if (automaton.States.Exists(In => In.Id == currentStateNum))
+                                currentState = automaton.States.Find(In => In.Id == currentStateNum);
+                            else
                             {
-                                Token token = new Token(pair[1].Trim('"').ToUpper());
-                                temp.addTransition(new Transition(token, new State(nextNum)));
+                                newState = true;
+                                currentState = new State(currentStateNum);
+                            }
+
+                            if (automaton.States.Exists(In => In.Id == nextNum))
+                                nextState = automaton.States.Find(In => In.Id == nextNum);
+                            else
+                            {
+                                newNextState = true;
+                                nextState = new State(nextNum);
+                            }
+
+                            
+                            if (pair[1].Contains("_COMMA"))
+                            {
+                                Token token;
+                                token = new Token(",");
+                                currentState.addTransition(new Transition(token, nextState));
+                            }
+                            else if (pair[1].Contains("_QUOTE"))
+                            {
+                                Token token;
+                                token = new Token("\"");
+                                currentState.addTransition(new Transition(token, nextState));
+                            }
+                            else if (pair[1].Contains("\""))
+                            {
+                                Token token;
+                                token = new Token(pair[1].Trim('"').ToUpper());
+                                currentState.addTransition(new Transition(token, nextState));
                             }
                             else
                             {
+                                SubmachineCall subMachineCall;
                                 string name = pair[1].Trim('"').ToUpper();
-                                Automaton refAutomaton = new Automaton(name);
-                                SubmachineCall subMachineCall = new SubmachineCall(temp, refAutomaton);
-                                ape.addAutomaton(refAutomaton);
-                                temp.addTransition(subMachineCall);
+                                if (name != automaton.Name)
+                                {
+                                    Automaton refAutomaton;
+                                    refAutomaton = (new APEParser()).GetAutomaton(name);
+                                    subMachineCall = new SubmachineCall(currentState, refAutomaton);
+                                    stackAutomaton.addAutomaton(refAutomaton);
+                                }
+                                else
+                                    subMachineCall = new SubmachineCall(currentState, automaton);
+
+                                currentState.addTransition(subMachineCall);
                             }
 
-                            ape.Automata.Find(In => In.Name == currentAutomatonName).addState(temp);
+                            if(newState) automaton.addState(currentState);
+                            if (newNextState) automaton.addState(nextState);
                         }
                     }
 
@@ -68,7 +143,12 @@ namespace APE.Parser
             }
         }
 
-        private void ParseFinalStates(StackAutomaton ape, string currentAutomatonName)
+        private void ParseSubmachines()
+        {
+
+        }
+
+        private void ParseFinalStates(Automaton automaton)
         {
             string[] finalStates = TokenizeField("final:");
             int finalStateNum;
@@ -77,7 +157,7 @@ namespace APE.Parser
                 for (int i = 1; i < finalStates.Length; i++)
                 {
                     if (Int32.TryParse(finalStates[1], out finalStateNum))
-                        ape.Automata.Find(In => In.Name == currentAutomatonName).addState(new State(finalStateNum, true));
+                        automaton.addState(new State(finalStateNum, true));
                     else
                         throw new ApplicationException("Wrong format of APE source file: invalid values for field 'final'.");
                 }

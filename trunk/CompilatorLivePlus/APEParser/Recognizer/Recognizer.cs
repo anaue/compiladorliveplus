@@ -44,7 +44,7 @@ namespace APE
         {
             int i=0;
             bool error = false;
-            while (!CurrentState.FinalState)
+            while (!CurrentState.FinalState || (i !=0 && i<chain.Length && chain[i].Equals(new Token(";"))))
             {
                 if (!RunTransition(chain[i]))
                 {
@@ -55,7 +55,7 @@ namespace APE
             }
 
             if (error) 
-                throw new ApplicationException("Sintatic Error!");
+                throw new ApplicationException("Sintatic Error! Index " + i);
             else 
                 return true;
         }

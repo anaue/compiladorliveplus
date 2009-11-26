@@ -1,20 +1,20 @@
 name: tipo
 initial: 0
 final: 1, 2
-(0, "int") -> 1
-(0, "float") -> 1
-(0, "bool") -> 1
-(0, "string") -> 2
-(0, "struct") -> 3
-(1, "[") -> 4
-(3, "ID") -> 5
-(4, "NUM") -> 6
-(5, "begin") -> 7
-(6, ",") -> 4
-(6, "]") -> 2
-(7, identificador) -> 8
-(7, "endstruct") -> 2
-(8, tipo) -> 9
-(9, ",") -> 10
-(9, "endstruct") -> 2
-(10, "ID") -> 8
+(0, "int") -> 1 & AS_TIPO_1
+(0, "float") -> 1 & AS_TIPO_2
+(0, "bool") -> 1 & AS_TIPO_3
+(0, "string") -> 2 & AS_TIPO_4
+(0, "struct") -> 3 & AS_TIPO_5
+(1, "[") -> 4 & AS_TIPO_6
+(3, "ID") -> 5 & AS_TIPO_7
+(4, "NUM") -> 6 & AS_TIPO_8
+(5, "begin") -> 7 & AS_TIPO_9
+(6, ",") -> 4 & AS_TIPO_10
+(6, "]") -> 2 & AS_TIPO_11
+(7, identificador) -> 8 & AS_TIPO_12
+(7, "endstruct") -> 2 & AS_TIPO_13
+(8, tipo) -> 9 & AS_TIPO_14
+(9, ",") -> 10 & AS_TIPO_15
+(9, "endstruct") -> 2 & AS_TIPO_16
+(10, "ID") -> 8 & AS_TIPO_17

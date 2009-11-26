@@ -43,14 +43,14 @@ namespace APE.Parser
                 return stackAutomaton.Automata.Find(In => In.Name == AName);
             else
             {
-                string path = String.Empty;
+                string path = "GrammarDefinitions/";
                 return ParseAutomaton(AName, path);
             }
         }
 
         private Automaton ParseAutomaton(string AName, string path)
         {
-            _text = File.OpenText(AName + ".txt");
+            _text = File.OpenText(path + AName + ".txt");
 
             string name = TokenizeField("name:")[1].Trim().ToUpper();
             Automaton automaton = new Automaton(name, ParseInitialState());

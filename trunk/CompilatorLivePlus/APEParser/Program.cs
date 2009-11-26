@@ -22,7 +22,9 @@ namespace APE
                 new Token("ID"),new Token("="),new Token("ID"),new Token("-"),new Token("NUM"),new Token(";"),new Token("ID"),
                 new Token("="),new Token("ID"),new Token("*"),new Token("NUM"),new Token(";"),new Token("ENDIF"), new Token(";")
             };
-            
+
+            //chain = new Token[] {new Token("ID"),new Token("="),new Token("ID"),new Token("-"),new Token("NUM"), new Token(";")};
+
             Console.WriteLine("Accept: " + recognizer.Recognize(chain));
 
             Console.ReadLine();

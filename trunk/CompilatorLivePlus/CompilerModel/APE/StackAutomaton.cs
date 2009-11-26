@@ -25,7 +25,8 @@ namespace CompilerModel.APE
 
         public void addAutomaton(Automaton automaton)
         {
-            Automata.Add(automaton);
+            if(!Automata.Exists(In=>In.Name==automaton.Name))
+                Automata.Add(automaton);
         }
 
         public override string ToString()

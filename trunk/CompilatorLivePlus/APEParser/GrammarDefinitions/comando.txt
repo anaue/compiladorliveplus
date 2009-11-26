@@ -10,7 +10,7 @@ final: 10
 (1, "=") -> 5
 (2, expressao_booleana) -> 12
 (3, expressao_booleana) -> 17
-(4, lista_posicoes_memoria) -> 8
+(4, "ID") -> 8
 (5, expressao_booleana) -> 8
 (6, "ID") -> 7
 (7, "(") -> 9

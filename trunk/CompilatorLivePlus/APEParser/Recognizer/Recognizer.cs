@@ -23,8 +23,9 @@ namespace APE
             CurrentState = CurrentAutomaton.States.Find(In => In.Id == CurrentAutomaton.Start.Id);
         }
 
-        public bool RunTransition(Token input)
+        public bool RunTransition(Token input, Token nextToken)
         {
+
             //Preferencialmente, procura-se transicoes internas
             List<Transition> internalTransitions = CurrentState.Transitions.FindAll(In => In.GetType() != typeof(SubmachineCall));
             foreach (Transition tr in internalTransitions)
@@ -32,12 +33,18 @@ namespace APE
                 if (tr.Input.tag == input.tag)
                 {
                     CurrentState = CurrentAutomaton.States.Find(In => In.Id == tr.NextState.Id);
-                    if (CurrentState.FinalState && !_stack.Empty)
+
+                    if (CurrentState.FinalState && !CheckLookAhead(CurrentState, nextToken))
                     {
-                        StackPair destination = (StackPair)_stack.Pop();
-                        CurrentAutomaton = destination.Automaton;
-                        CurrentState = destination.State;
+                        if (!_stack.Empty)
+                        {
+                            StackPair stackPair = (StackPair)_stack.Pop();
+                            GoToSubmachine(stackPair.Automaton, stackPair.State);
+                            //RunTransition(input, nextToken);
+                        }
+                        return true;
                     }
+
                     return true;
                 }
             }
@@ -51,7 +58,7 @@ namespace APE
 
                     _stack.Push(new StackPair(CurrentAutomaton, call.NextState));
                     GoToSubmachine(call.CalledAutomaton);
-                    RunTransition(input);
+                    RunTransition(input, nextToken);
                     return true;
                 }
                 else
@@ -66,24 +73,36 @@ namespace APE
                         {
                             _stack.Push(new StackPair(CurrentAutomaton, sc.NextState));
                             GoToSubmachine(sc.CalledAutomaton);
-                            RunTransition(input);
+                            RunTransition(input, nextToken);
                             return true;
                         }
                     }
                 }
             }
 
-            if (CurrentState.FinalState)
+            if (CurrentState.FinalState && !CheckLookAhead(CurrentState, input))
             {
                 if (!_stack.Empty)
                 {
                     StackPair stackPair = (StackPair)_stack.Pop();
                     GoToSubmachine(stackPair.Automaton, stackPair.State);
+                    RunTransition(input, nextToken);
                 }
                 return true;
             }
             return false;
+        }
+
             
+            
+
+
+        private bool CheckLookAhead(State CurrentState, Token nextToken)
+        {
+            if (nextToken != null)
+                return CurrentState.Transitions.Exists(In => In.Input.Equals(nextToken));
+            else
+                return false;
         }
 
         private void GoToSubmachine(Automaton automaton, State state)
@@ -105,7 +124,7 @@ namespace APE
             //while (!(CurrentState.FinalState && i < chain.Length && !StateHasTransitionsForToken(CurrentState, chain[i])))
             while (!(CurrentState.FinalState && _stack.Empty))
             {
-                if (!RunTransition(chain[i]))
+                if (!RunTransition(chain[i], i < chain.Length-1? chain[i+1]:null))
                 {
                     error = true;
                     break;

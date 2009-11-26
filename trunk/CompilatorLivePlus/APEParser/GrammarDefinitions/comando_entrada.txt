@@ -1,0 +1,5 @@
+name: comando_entrada
+initial: 0
+final: 2
+(0, "input") -> 1
+(1, identificador) -> 2

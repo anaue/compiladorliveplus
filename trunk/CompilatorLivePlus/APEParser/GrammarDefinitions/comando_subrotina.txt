@@ -1,0 +1,8 @@
+name: comando_subrotina
+initial: 0
+final: 5
+(0, "call") -> 1
+(1, identificador) -> 2
+(2, "(") -> 3
+(3, lista_de_identificadores) -> 4
+(4, ")") -> 5

@@ -1,0 +1,7 @@
+name: termo_booleano
+initial: 0
+final: 3
+(0, expressao_aritmetica) -> 1
+(1, operador_inegualdade) -> 2
+(1, operador_igualdade) -> 2
+(2, expressao_aritmetica) -> 3

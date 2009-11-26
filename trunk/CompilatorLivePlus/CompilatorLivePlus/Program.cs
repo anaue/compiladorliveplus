@@ -14,7 +14,7 @@ namespace CompilatorLivePlus
             CompilatorLivePlus.Lexer.Lexer lex = new CompilatorLivePlus.Lexer.Lexer();            
 
             Sintatic.Sintatic sint = new CompilatorLivePlus.Sintatic.Sintatic(lex);
-            sint.Program();
+            sint.Run();
             
 
 #if TESTELEXICO

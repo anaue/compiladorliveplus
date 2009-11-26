@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
-using APE.Model;
-using APE.Lexer;
+using CompilerModel.APE;
+using CompilerModel.Lexer;
 
 namespace APE.Parser
 {

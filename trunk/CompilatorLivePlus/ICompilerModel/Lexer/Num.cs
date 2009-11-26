@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace CompilatorLivePlus.Lexer
+namespace CompilerModel.Lexer
 {
-    class Num: Token
+    public class Num: Token
     {
         private int value;
 

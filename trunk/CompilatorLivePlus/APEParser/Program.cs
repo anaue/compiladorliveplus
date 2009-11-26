@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using APE.Parser;
-using APE.Model;
-using APE.Lexer;
+using CompilerModel.APE;
+using CompilerModel.Lexer;
 
 namespace APE
 {

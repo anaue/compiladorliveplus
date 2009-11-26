@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Text;
 
-namespace CompilatorLivePlus
+namespace CompilerModel.Structures
 {
 
-    static class Character
+    public static class Character
     {
         public static bool isWhiteSpace(char peek)
         {

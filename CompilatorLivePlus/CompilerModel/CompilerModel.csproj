@@ -60,6 +60,7 @@
     <Compile Include="Structures\Hashtable.cs" />
     <Compile Include="Structures\Stack.cs" />
     <Compile Include="Symbols\Env.cs" />
+    <Compile Include="Symbols\Input.cs" />
     <Compile Include="Trace\Logger.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

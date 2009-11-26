@@ -65,9 +65,6 @@
     <Content Include="GrammarDefinitions\comando.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="GrammarDefinitions\digito.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="GrammarDefinitions\expressao_aritmetica.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

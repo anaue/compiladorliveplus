@@ -76,6 +76,10 @@ namespace APE.Parser
                 {
                     State currentState;
                     State nextState;
+
+                    string semanticActionName = currentLine.Split('&')[1].Trim();
+                    currentLine = currentLine.Split('&')[0].Trim();
+
                     string left = currentLine.Split(new char[]{'$'}, StringSplitOptions.RemoveEmptyEntries)[0];
                     string nextStateNumber = currentLine.Split(new char[] { '$' }, StringSplitOptions.RemoveEmptyEntries)[1];
                     int nextNum;
@@ -108,19 +112,19 @@ namespace APE.Parser
                             {
                                 Token token;
                                 token = new Token(",");
-                                currentState.addTransition(new Transition(token, nextState));
+                                currentState.addTransition(new Transition(token, nextState, semanticActionName));
                             }
                             else if (pair[1].Contains("_QUOTE"))
                             {
                                 Token token;
                                 token = new Token("\"");
-                                currentState.addTransition(new Transition(token, nextState));
+                                currentState.addTransition(new Transition(token, nextState, semanticActionName));
                             }
                             else if (pair[1].Contains("\""))
                             {
                                 Token token;
                                 token = new Token(pair[1].Trim('"').ToUpper());
-                                currentState.addTransition(new Transition(token, nextState));
+                                currentState.addTransition(new Transition(token, nextState, semanticActionName));
                             }
                             else
                             {

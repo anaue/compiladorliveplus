@@ -10,17 +10,19 @@ namespace CompilerModel.APE
     {
         public Token Input;
         public State NextState;
-        public Delegate SemanticAction;
+        public String SemanticActionName;
+        
 
         public Transition()
         {
-
+            
         }
 
-        public Transition(Token input, State nextState)
+        public Transition(Token input, State nextState, string semanticActionName)
         {
             NextState = nextState;
             Input = input;
+            SemanticActionName = semanticActionName;
         }
 
     }

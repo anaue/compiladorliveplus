@@ -5,6 +5,8 @@ using System.Text;
 using CompilerModel.APE;
 using CompilerModel.Lexer;
 using CompilerModel.Structures;
+using System.Reflection;
+using CompilerModel.Semantic;
 
 namespace APE
 {
@@ -33,6 +35,9 @@ namespace APE
                 if (tr.Input.tag == input.tag)
                 {
                     CurrentState = CurrentAutomaton.States.Find(In => In.Id == tr.NextState.Id);
+                    
+                    //Chamada da acao semantica
+                    RunSemanticAction(tr.SemanticActionName);
 
                     if (CurrentState.FinalState && !CheckLookAhead(CurrentState, nextToken))
                     {
@@ -93,8 +98,13 @@ namespace APE
             return false;
         }
 
-            
-            
+        private static void RunSemanticAction(String semanticActionName)
+        {
+            SemanticActions sa = new SemanticActions();
+            MethodInfo methodInfo = typeof(SemanticActions).GetMethod(semanticActionName);
+            // Use the instance to call the method without arguments
+            methodInfo.Invoke(sa, null);
+        }
 
 
         private bool CheckLookAhead(State CurrentState, Token nextToken)

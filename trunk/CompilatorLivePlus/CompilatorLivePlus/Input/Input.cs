@@ -54,5 +54,10 @@ namespace CompilatorLivePlus.Input
             next = 0;
             lookAHead = next + 1;
         }
+        public void LookedAHead()
+        {
+            next = lookAHead + 1;
+            lookAHead = next + 1;
+        }
     }
 }

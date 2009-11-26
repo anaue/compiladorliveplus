@@ -3,3 +3,8 @@ C:\Documents and Settings\VMUser\Desktop\Compilador Live+\CompilatorLivePlus\ICo
 C:\Documents and Settings\VMUser\Desktop\Compilador Live+\CompilatorLivePlus\ICompilerModel\bin\Debug\ICompilerModel.pdb
 C:\Documents and Settings\VMUser\Desktop\Compilador Live+\CompilatorLivePlus\ICompilerModel\obj\Debug\ICompilerModel.dll
 C:\Documents and Settings\VMUser\Desktop\Compilador Live+\CompilatorLivePlus\ICompilerModel\obj\Debug\ICompilerModel.pdb
+C:\Documents and Settings\VMUser\Desktop\Compilador Live+\CompilatorLivePlus\CompilerModel\bin\Debug\ICompilerModel.dll
+C:\Documents and Settings\VMUser\Desktop\Compilador Live+\CompilatorLivePlus\CompilerModel\bin\Debug\ICompilerModel.pdb
+C:\Documents and Settings\VMUser\Desktop\Compilador Live+\CompilatorLivePlus\CompilerModel\obj\Debug\ResolveAssemblyReference.cache
+C:\Documents and Settings\VMUser\Desktop\Compilador Live+\CompilatorLivePlus\CompilerModel\obj\Debug\ICompilerModel.dll
+C:\Documents and Settings\VMUser\Desktop\Compilador Live+\CompilatorLivePlus\CompilerModel\obj\Debug\ICompilerModel.pdb

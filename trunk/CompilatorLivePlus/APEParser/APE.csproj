@@ -51,7 +51,7 @@
     <Compile Include="Recognizer\Recognizer.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ICompilerModel\CompilerModel.csproj">
+    <ProjectReference Include="..\CompilerModel\CompilerModel.csproj">
       <Project>{61D525FE-0447-4373-81D2-E2C0B7D11D45}</Project>
       <Name>CompilerModel</Name>
     </ProjectReference>

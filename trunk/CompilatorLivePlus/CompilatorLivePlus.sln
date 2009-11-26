@@ -5,7 +5,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CompilatorLivePlus", "Compi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APE", "APEParser\APE.csproj", "{43F86D01-DF12-4C91-839D-35D407E22FAA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CompilerModel", "ICompilerModel\CompilerModel.csproj", "{61D525FE-0447-4373-81D2-E2C0B7D11D45}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CompilerModel", "CompilerModel\CompilerModel.csproj", "{61D525FE-0447-4373-81D2-E2C0B7D11D45}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

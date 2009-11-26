@@ -1,0 +1,9 @@
+name: programa
+initial: 0
+final: 6
+(0, "program") -> 1
+(1, declaracoes) -> 2
+(2, "begin") -> 3
+(3, lista_de_comandos) -> 4
+(4, "end") -> 5
+(5, ";") -> 6

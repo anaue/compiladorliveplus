@@ -1,0 +1,5 @@
+name: tamanho_matriz
+initial: 0
+final: 1
+(0, numero) -> 1
+(1, ",") -> 0

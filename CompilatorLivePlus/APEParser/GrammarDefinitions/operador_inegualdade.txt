@@ -1,0 +1,7 @@
+name: operador_inegualdade
+initial: 0
+final: 1
+(0, ">") -> 1
+(0, "<") -> 1
+(0, ">=") -> 1
+(0, "<=") -> 1

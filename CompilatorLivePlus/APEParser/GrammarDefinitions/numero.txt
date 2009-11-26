@@ -1,0 +1,4 @@
+name: numero
+initial: 0
+final: 1
+(0, "NUM") -> 1

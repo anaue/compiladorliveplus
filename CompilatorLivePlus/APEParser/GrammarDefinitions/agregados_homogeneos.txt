@@ -1,0 +1,8 @@
+name: agregados_homogeneos
+initial: 0
+final: 4
+(0, tipo) -> 1
+(1, "[") -> 2
+(2, tamanho_matriz) -> 3
+(2, "]") -> 4
+(3, "]") -> 4

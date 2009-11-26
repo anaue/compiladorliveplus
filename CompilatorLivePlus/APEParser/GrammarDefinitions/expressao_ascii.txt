@@ -1,0 +1,4 @@
+name: expressao_ascii
+initial: 0
+final: 1
+(0, "ID") -> 1

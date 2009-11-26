@@ -1,0 +1,5 @@
+name: lista_de_comandos
+initial: 0
+final: 1
+(0, comando) -> 1
+(1, comando) -> 1

@@ -1,0 +1,8 @@
+name: agregados_heterogeneos
+initial: 0
+final: 5
+(0, "struct") -> 1
+(1, identificador) -> 2
+(2, "begin") -> 3
+(3, declaracoes) -> 4
+(4, "endstruct") -> 5

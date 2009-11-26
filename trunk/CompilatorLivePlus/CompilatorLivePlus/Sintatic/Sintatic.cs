@@ -53,7 +53,7 @@ namespace CompilatorLivePlus.Sintatic
                             _env = _prevEnv;
                             _prevEnv = _env.Previous;
                         }
-
+                        
                         _env.put(_tok, _tok.tag.ToString());
 
                     }

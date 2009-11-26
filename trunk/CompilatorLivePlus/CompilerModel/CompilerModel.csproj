@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.30729</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{61D525FE-0447-4373-81D2-E2C0B7D11D45}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -60,6 +60,7 @@
     <Compile Include="Structures\Hashtable.cs" />
     <Compile Include="Structures\Stack.cs" />
     <Compile Include="Symbols\Env.cs" />
+    <Compile Include="Trace\Logger.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

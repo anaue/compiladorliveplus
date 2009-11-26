@@ -1,7 +1,7 @@
 name: membro_booleano
 initial: 0
 final: 1
-(0, identificador) -> 1
+(0, "id") -> 1
 (0, termo_booleano) -> 1
 (0, "true") -> 1
 (0, "false") -> 1

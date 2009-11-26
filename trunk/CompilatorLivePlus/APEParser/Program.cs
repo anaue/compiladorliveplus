@@ -18,7 +18,7 @@ namespace APE
             Console.ReadLine();
             Recognizer recognizer = new Recognizer(automaton);
             //{new Token("IF"), new Token("("), new Token("TRUE"), new Token(")"), new Token("BEGIN"), new Token};
-            Token[] chain = new Token[] {new Token("IF"), new Token("ID"), new Token(">"),new Token("NUM"), new Token("then"),
+            Token[] chain = new Token[] {new Token("IF"), new Token("NUM"), new Token("<"),new Token("ID"), new Token("then"),
                 new Token("ID"),new Token("="),new Token("ID"),new Token("-"),new Token("NUM"),new Token(";"),new Token("ID"),
                 new Token("="),new Token("ID"),new Token("*"),new Token("NUM"),new Token(";"),new Token("ENDIF"), new Token(";")
             };

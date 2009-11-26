@@ -47,6 +47,7 @@
   <ItemGroup>
     <Compile Include="APE\Automaton.cs" />
     <Compile Include="APE\StackAutomaton.cs" />
+    <Compile Include="APE\StackPair.cs" />
     <Compile Include="APE\State.cs" />
     <Compile Include="APE\SubmachineCall.cs" />
     <Compile Include="APE\Transition.cs" />

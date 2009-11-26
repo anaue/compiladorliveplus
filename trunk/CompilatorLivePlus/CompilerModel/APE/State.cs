@@ -43,5 +43,10 @@ namespace CompilerModel.APE
             return null;
         }
 
+
+        public bool HasTranstionsForToken(Token lookAhead)
+        {
+            return this.Transitions.FindAll(In=>In.GetType() != typeof(SubmachineCall)).Exists(In => In.Input.Equals(lookAhead));
+        }
     }
 }

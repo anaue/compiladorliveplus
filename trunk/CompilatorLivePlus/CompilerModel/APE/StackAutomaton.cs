@@ -50,8 +50,8 @@ namespace CompilerModel.APE
                         else
                         {
                             SubmachineCall sc = (SubmachineCall)tr;
-                            str.Append("\t\t\t(" + sc.CalledAutomaton.Name);
-                            str.Append("; " + sc.BackState.Id + ")\n");
+                            str.Append("\t\t\t(" + st.Id + ", " + sc.CalledAutomaton.Name);
+                            str.Append(") -> " + sc.NextState.Id + ")\n");
                         }
                     }
                     str.Append("\n");

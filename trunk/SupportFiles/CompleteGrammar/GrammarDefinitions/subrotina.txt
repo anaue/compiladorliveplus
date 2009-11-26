@@ -2,7 +2,7 @@ name: subrotina
 initial: 0
 final: 10
 (0, "sub") -> 1
-(1, identificador) -> 2
+(1, "id") -> 2
 (2, "(") -> 3
 (3, declaracoes) -> 4
 (4, ")") -> 5

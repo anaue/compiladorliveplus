@@ -12,16 +12,16 @@ namespace APE.Parser
         private StreamReader _text;
         public static StackAutomaton stackAutomaton;
 
+
         public APEParser()
         {
-            
         }
 
         public StackAutomaton ParseFromRoot(string root)
         {
             root = root.ToUpper();
             stackAutomaton = new StackAutomaton();
-            stackAutomaton.addAutomaton(GetAutomaton(root));
+            stackAutomaton.addAutomaton(GetAutomaton(root, new List<Automaton>()));
             stackAutomaton.Start = stackAutomaton.Automata.Find(In => In.Name == root);
             return stackAutomaton;
         }
@@ -36,31 +36,37 @@ namespace APE.Parser
             }
         }
 
-        public Automaton GetAutomaton(string AName)
+        public Automaton GetAutomaton(string AName, List<Automaton> parentAutomata)
         {
             AName = AName.ToUpper();
             if (stackAutomaton.Automata.Count != 0 && stackAutomaton.Automata.Exists(In => In.Name == AName))
                 return stackAutomaton.Automata.Find(In => In.Name == AName);
+            else if (parentAutomata.Exists(In => In.Name == AName))
+            {
+                Automaton pai = parentAutomata.Find(In => In.Name == AName);
+                parentAutomata.Remove(pai);
+                return pai;
+            }
             else
             {
                 string path = "GrammarDefinitions/";
-                return ParseAutomaton(AName, path);
+                return ParseAutomaton(AName, path, parentAutomata);
             }
         }
 
-        private Automaton ParseAutomaton(string AName, string path)
+        private Automaton ParseAutomaton(string AName, string path, List<Automaton> parentAutomata)
         {
             _text = File.OpenText(path + AName + ".txt");
 
             string name = TokenizeField("name:")[1].Trim().ToUpper();
             Automaton automaton = new Automaton(name, ParseInitialState());
             ParseFinalStates(automaton);
-            ParseTransitions(automaton);
+            ParseTransitions(automaton, parentAutomata);
 
             return automaton;
         }
 
-        private void ParseTransitions(Automaton automaton)
+        private void ParseTransitions(Automaton automaton, List<Automaton> parentAutomata)
         {
             string currentLine;
 
@@ -123,8 +129,9 @@ namespace APE.Parser
                                 if (name != automaton.Name)
                                 {
                                     Automaton refAutomaton;
-                                    refAutomaton = (new APEParser()).GetAutomaton(name);
-                                    subMachineCall = new SubmachineCall(currentState, refAutomaton);
+                                    parentAutomata.Add(automaton);
+                                    refAutomaton = (new APEParser()).GetAutomaton(name, parentAutomata);
+                                    subMachineCall = new SubmachineCall(nextState, refAutomaton);
                                     stackAutomaton.addAutomaton(refAutomaton);
                                 }
                                 else
@@ -156,7 +163,7 @@ namespace APE.Parser
             {
                 for (int i = 1; i < finalStates.Length; i++)
                 {
-                    if (Int32.TryParse(finalStates[1], out finalStateNum))
+                    if (Int32.TryParse(finalStates[i], out finalStateNum))
                         automaton.addState(new State(finalStateNum, true));
                     else
                         throw new ApplicationException("Wrong format of APE source file: invalid values for field 'final'.");

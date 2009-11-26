@@ -7,12 +7,11 @@ namespace CompilerModel.APE
 {
     public class SubmachineCall: Transition
     {
-        public State BackState;
         public Automaton CalledAutomaton;
 
         public SubmachineCall(State backState, Automaton called)
         {
-            this.BackState = backState;
+            base.NextState = backState;
             this.CalledAutomaton = called;
         }
 

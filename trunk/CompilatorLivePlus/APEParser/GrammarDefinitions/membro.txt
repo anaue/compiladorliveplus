@@ -1,9 +1,0 @@
-name: membro
-initial: 0
-final: 1
-(0, identificador) -> 1
-(0, numero) -> 1
-(0, expressao_chamada_funcao) -> 1
-(0, "(") -> 2
-(2, expressao_aritmetica) -> 3
-(3, ")") -> 1

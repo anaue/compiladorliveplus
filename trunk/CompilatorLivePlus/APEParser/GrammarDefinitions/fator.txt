@@ -1,5 +1,0 @@
-name: fator
-initial: 0
-final: 1
-(0, membro) -> 1
-(1, "^") -> 0

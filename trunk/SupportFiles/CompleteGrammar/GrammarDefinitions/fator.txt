@@ -1,0 +1,14 @@
+name: fator
+initial: 0
+final: 1, 4
+(0, "id") -> 1
+(0, "NUM") -> 1
+(0, expressao_chamada_funcao) -> 1
+(0, "(") -> 2
+(2, expressao_aritmetica) -> 3
+(3, ")") -> 4
+(4, "NUM") -> 4
+(4, expressao_chamada_funcao) -> 4
+(4, "(") -> 2
+(4, "^") -> 5
+(5, "id") -> 4

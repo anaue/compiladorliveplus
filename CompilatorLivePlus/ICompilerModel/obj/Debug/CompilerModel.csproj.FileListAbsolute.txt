@@ -1,0 +1,5 @@
+C:\Documents and Settings\VMUser\Desktop\Compilador Live+\CompilatorLivePlus\ICompilerModel\obj\Debug\ResolveAssemblyReference.cache
+C:\Documents and Settings\VMUser\Desktop\Compilador Live+\CompilatorLivePlus\ICompilerModel\bin\Debug\ICompilerModel.dll
+C:\Documents and Settings\VMUser\Desktop\Compilador Live+\CompilatorLivePlus\ICompilerModel\bin\Debug\ICompilerModel.pdb
+C:\Documents and Settings\VMUser\Desktop\Compilador Live+\CompilatorLivePlus\ICompilerModel\obj\Debug\ICompilerModel.dll
+C:\Documents and Settings\VMUser\Desktop\Compilador Live+\CompilatorLivePlus\ICompilerModel\obj\Debug\ICompilerModel.pdb

@@ -1,6 +1,10 @@
 ﻿using System;
 using System.IO;
 using System.Text;
+using APE.Parser;
+using CompilerModel.Lexer;
+using CompilerModel.Symbols;
+using CompilerModel.APE;
 
 namespace CompilatorLivePlus.Sintatic
 {
@@ -10,82 +14,88 @@ namespace CompilatorLivePlus.Sintatic
                 Input.Input inChain;
                 //FileStream rulez;
                 CompilatorLivePlus.Lexer.Lexer _lex;
-                public CompilatorLivePlus.Symbols.Env _env;
-                public CompilatorLivePlus.Symbols.Env _prevEnv;
+                public CompilerModel.Symbols.Env _env;
+                public CompilerModel.Symbols.Env _prevEnv;
 
                 public Sintatic(CompilatorLivePlus.Lexer.Lexer lex)
                 {
                     _lex = lex;
-                    _env = new CompilatorLivePlus.Symbols.Env( null);
+                    _env = new CompilerModel.Symbols.Env( null);
                        //rulez = new FileStream("regras-codigo.txt", FileMode.OpenOrCreate, FileAccess.Read);
                 }
 
-                public void Program()
+                public void Run()
                 {
+                    APEParser apeParser = new APEParser();
+                    StackAutomaton ape = apeParser.GetStackAutomaton();
+
                     inChain = new CompilatorLivePlus.Input.Input();
 
                     while (!_lex.hasEnded())
                     {
-                        Lexer.Token escan = _lex.scan();
+                        Token escan = _lex.scan();
                         inChain.Add(escan);
                     }
 
                     while (inChain.hasNext())
                     {
-                        Lexer.Token _tok = inChain.getNext();
+                        Token _tok = inChain.getNext();
 
                         if (isOpenScope(_tok)) 
-                        {// se for um token de abertura de block, salva o escopo e cria um novo
+                        {
+                            // se for um token de abertura de block, salva o escopo e cria um novo
                             _prevEnv = _env;
-                            _env = new CompilatorLivePlus.Symbols.Env(_env);
+                            _env = new CompilerModel.Symbols.Env(_env);
                             
-                        }else if (isCloseScope(_tok))
+                        }
+                        else if (isCloseScope(_tok))
                         {
                             _env = _prevEnv;
                             _prevEnv = _env.Previous;
                         }
                         _env.put(_tok, _tok.tag.ToString());
+
                     }
                 }
-                public bool isOpenScope(Lexer.Token _tok)
+                public bool isOpenScope(Token _tok)
                 {
                     switch (_tok.tag)
                     {
-                        case (int)Lexer.Tag.PROGRAM:
+                        case (int)Tag.PROGRAM:
                             {
-                                _env.CloseScope = (int)Lexer.Tag.END;
+                                _env.CloseScope = (int)Tag.END;
                                 return true;
                             }
-                        case (int)Lexer.Tag.FUNCTION:
+                        case (int)Tag.FUNCTION:
                             {
-                                _env.CloseScope = (int)Lexer.Tag.ENDFUNCTION;
+                                _env.CloseScope = (int)Tag.ENDFUNCTION;
                                 return true;
                             }
-                        case (int)Lexer.Tag.SUB:
+                        case (int)Tag.SUB:
                             {
-                                _env.CloseScope = (int)Lexer.Tag.ENDSUB;
+                                _env.CloseScope = (int)Tag.ENDSUB;
                                 return true;
                             }
-                        case (int)Lexer.Tag.STRUCT:
+                        case (int)Tag.STRUCT:
                             {
-                                _env.CloseScope = (int)Lexer.Tag.ENDSTRUCT;
+                                _env.CloseScope = (int)Tag.ENDSTRUCT;
                                 return true;
                             }
-                        case (int)Lexer.Tag.IF:
+                        case (int)Tag.IF:
                             {
-                                _env.CloseScope = (int)Lexer.Tag.ENDIF;
+                                _env.CloseScope = (int)Tag.ENDIF;
                                 return true;
                             }
-                        case (int)Lexer.Tag.WHILE:
+                        case (int)Tag.WHILE:
                             {
-                                _env.CloseScope = (int)Lexer.Tag.ENDLOOP;
+                                _env.CloseScope = (int)Tag.ENDLOOP;
                                 return true;
                             }
                     }
                     return false;
                 }
 
-                public bool isCloseScope(Lexer.Token _tok)
+                public bool isCloseScope(Token _tok)
                 {
                     if (_prevEnv != null)
                         return _tok.tag == _prevEnv.CloseScope;

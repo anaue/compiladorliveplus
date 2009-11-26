@@ -1,8 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.Text;
-using CompilatorLivePlus.Symbols;
-using CompilatorLivePlus.Lexer;
+using CompilerModel.Symbols;
+using CompilerModel.Lexer;
 
 namespace CompilatorLivePlus.Input
 {

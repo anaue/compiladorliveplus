@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.Text;
+using CompilerModel.Lexer;
+using CompilerModel.Structures;
 
 namespace CompilatorLivePlus.Lexer
 {

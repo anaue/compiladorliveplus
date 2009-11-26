@@ -1,18 +1,19 @@
 ﻿using System;
 using CompilatorLivePlus.Lexer;
 using System.Text;
+using CompilerModel.Lexer;
 
 namespace CompilatorLivePlus.Input
 {
     public class Input
     {
         static int maxInput = 2048;
-        private Lexer.Token[] entrada;
+        private Token[] entrada;
         private int level, next;
 
         public Input()
         {
-            entrada = new Lexer.Token[maxInput];
+            entrada = new Token[maxInput];
             level = next = 0;
         }
         public void Add( Token _token)

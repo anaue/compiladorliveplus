@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text;
 
-namespace CompilatorLivePlus.Lexer
+namespace CompilerModel.Lexer
 {
     public class Word : Token
     {

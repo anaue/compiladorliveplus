@@ -1,4 +1,0 @@
-name: identificador
-initial: 0
-final: 1
-(0, "ID") -> 1

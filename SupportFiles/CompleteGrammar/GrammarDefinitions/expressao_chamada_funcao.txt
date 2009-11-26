@@ -1,0 +1,8 @@
+name: expressao_chamada_funcao
+initial: 0
+final: 4
+(0, "id") -> 1
+(1, "(") -> 2
+(2, LISTA_DE_IDENTIFICADORES) -> 3
+(2, expressao_aritmetica) -> 3
+(3, ")") -> 4

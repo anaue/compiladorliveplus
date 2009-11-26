@@ -1,7 +1,7 @@
 name: comando_atribuicao
 initial: 0
 final: 3
-(0, identificador) -> 1
+(0, "id") -> 1
 (1, "=") -> 2
-(2, identificador) -> 3
+(2, "id") -> 3
 (2, expressao) -> 3

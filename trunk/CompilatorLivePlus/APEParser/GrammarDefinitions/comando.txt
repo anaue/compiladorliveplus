@@ -1,7 +1,7 @@
 name: comando
 initial: 0
 final: 10
-(0, identificador) -> 1
+(0, "ID") -> 1
 (0, "if") -> 2
 (0, "while") -> 3
 (0, "input") -> 4
@@ -12,10 +12,10 @@ final: 10
 (3, expressao_booleana) -> 17
 (4, lista_posicoes_memoria) -> 8
 (5, expressao_booleana) -> 8
-(6, identificador) -> 7
+(6, "ID") -> 7
 (7, "(") -> 9
 (8, ";") -> 10
-(9, identificador) -> 11
+(9, "ID") -> 11
 (11, ",") -> 9
 (11, ")") -> 8
 (12, "then") -> 13

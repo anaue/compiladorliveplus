@@ -71,13 +71,13 @@ namespace APE.Parser
             string currentLine;
 
             while(!_text.EndOfStream){
-                currentLine = _text.ReadLine().Trim().Replace("\",\"", "_COMMA").Replace("\"\"\"", "_QUOTE");
+                currentLine = _text.ReadLine().Trim().Replace("\",\"", "_COMMA").Replace("\"\"\"", "_QUOTE").Replace("->", "$");
                 if (!currentLine.Equals(String.Empty))
                 {
                     State currentState;
                     State nextState;
-                    string left = currentLine.Split(new char[] { '-', '>' }, StringSplitOptions.RemoveEmptyEntries)[0];
-                    string nextStateNumber = currentLine.Split(new char[] { '-', '>' }, StringSplitOptions.RemoveEmptyEntries)[1];
+                    string left = currentLine.Split(new char[]{'$'}, StringSplitOptions.RemoveEmptyEntries)[0];
+                    string nextStateNumber = currentLine.Split(new char[] { '$' }, StringSplitOptions.RemoveEmptyEntries)[1];
                     int nextNum;
                     if (Int32.TryParse(nextStateNumber, out nextNum))
                     {
@@ -135,7 +135,7 @@ namespace APE.Parser
                                     stackAutomaton.addAutomaton(refAutomaton);
                                 }
                                 else
-                                    subMachineCall = new SubmachineCall(currentState, automaton);
+                                    subMachineCall = new SubmachineCall(nextState, automaton);
 
                                 currentState.addTransition(subMachineCall);
                             }

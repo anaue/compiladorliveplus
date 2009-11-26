@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using CompilatorLivePlus.Lexer;
+using CompilerModel.Lexer;
+using CompilerModel.Structures;
 
-namespace CompilatorLivePlus.Symbols
+namespace CompilerModel.Symbols
 {
-  
     public class Env
     {
         private Hashtable table;

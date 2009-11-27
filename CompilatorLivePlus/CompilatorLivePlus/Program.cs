@@ -11,50 +11,24 @@ namespace CompilatorLivePlus
 
         static void Main(string[] args)
         {
-            CompilatorLivePlus.Lexer.Lexer lex = new CompilatorLivePlus.Lexer.Lexer();            
+            CompilatorLivePlus.Lexer.Lexer lex = new CompilatorLivePlus.Lexer.Lexer();
+            try
+            {       
 
-            Sintatic.Sintatic sint = new CompilatorLivePlus.Sintatic.Sintatic(lex);
-            sint.Run();
-            
+                Sintatic.Sintatic sint = new CompilatorLivePlus.Sintatic.Sintatic(lex);
+                sint.Run();
+                Console.WriteLine("Linhas:" + lex.line);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Erro na linha:" + lex.line);
+                Console.WriteLine(ex.Message);
+            }
 
 #if TESTELEXICO
 
-
-            //while (inChain.hasNext())
-            //{
-            //    Lexer.Token _input = inChain.getNext();
-            //    if (_input != null)
-            //    {
-            //        Console.Write(_input.tag+ "    ");
-            //        try
-            //        {
-            //            Console.Write(((Lexer.Word)_input).Lexeme);
-            //        }
-            //        catch (Exception)
-            //        {
-            //            try
-            //            {
-            //                Console.Write(((Lexer.Num)_input).Value);
-
-            //            }
-            //            catch (Exception)
-            //            {
-            //                Console.Write(Char.ConvertFromUtf32(_input.tag));
-            //            }
-            //        }
-            //        finally
-            //        {
-            //            Console.Write("\n");
-            //        }
-
-            //        if (_input.tag == 59)
-            //            Console.WriteLine(" ");
-            //    }
-            //}
+#endif     
             
-            Console.WriteLine("linhas:" + lex.line);
-            
-#endif
             Console.ReadLine();
             
         }

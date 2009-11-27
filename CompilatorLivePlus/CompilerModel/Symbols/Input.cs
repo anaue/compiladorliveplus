@@ -2,7 +2,7 @@
 using CompilerModel.Lexer;
 using System.Text;
 
-namespace CompilatorLivePlus.Input
+namespace CompilerModel.Symbols
 {
     public class Input
     {
@@ -31,16 +31,19 @@ namespace CompilatorLivePlus.Input
         {
             if (next == maxInput)
                 throw new Exception("INPUT: Next input invalid");
+            
             Token retorno = entrada[next];
             next++;
-            lookAHead = next + 1;
+            lookAHead = next;
+            
             return retorno;
         }
 
         public Token getLookAHead()
         {
             if (lookAHead == maxInput)
-                throw new Exception("INPUT: Look a head invalid");
+                return null;
+
             Token retorno = entrada[lookAHead];
             lookAHead++;
             return retorno;
@@ -51,13 +54,13 @@ namespace CompilatorLivePlus.Input
         }
         public void resetNext()
         {
-            next = 0;
+            next =1;
             lookAHead = next + 1;
         }
-        public void LookedAHead()
-        {
-            next = lookAHead + 1;
-            lookAHead = next + 1;
-        }
+        //public void LookedAHead()
+        //{
+        //    next = lookAHead + 1;
+        //    lookAHead = next + 1;
+        //}
     }
 }

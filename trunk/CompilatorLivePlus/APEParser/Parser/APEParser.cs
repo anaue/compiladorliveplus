@@ -32,7 +32,7 @@ namespace APE.Parser
                 return stackAutomaton;
             else
             {
-                return ParseFromRoot("comando");
+                return ParseFromRoot("codigo");
             }
         }
 

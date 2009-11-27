@@ -25,7 +25,7 @@ namespace APE
 
             //chain = new Token[] {new Token("ID"),new Token("="),new Token("ID"),new Token("-"),new Token("NUM"), new Token(";")};
 
-            Console.WriteLine("Accept: " + recognizer.Recognize(chain));
+            //Console.WriteLine("Accept: " + recognizer.Recognize(chain));
 
             Console.ReadLine();
         }

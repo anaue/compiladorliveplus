@@ -53,12 +53,6 @@
     <Compile Include="Recognizer\Recognizer.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CompilerModel\CompilerModel.csproj">
-      <Project>{61D525FE-0447-4373-81D2-E2C0B7D11D45}</Project>
-      <Name>CompilerModel</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="GrammarDefinitions\codigo.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -77,6 +71,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\app.manifest" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CompilerModel\CompilerModel.csproj">
+      <Project>{61D525FE-0447-4373-81D2-E2C0B7D11D45}</Project>
+      <Name>CompilerModel</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -2,16 +2,27 @@
 using System.IO;
 using System.Text;
 using APE.Parser;
+using APE;
 using CompilerModel.Lexer;
 using CompilerModel.Symbols;
 using CompilerModel.APE;
 
 namespace CompilatorLivePlus.Sintatic
 {
+
+            //{new Token("IF"), new Token("("), new Token("TRUE"), new Token(")"), new Token("BEGIN"), new Token};
+            //Token[] chain = new Token[] {new Token("IF"), new Token("NUM"), new Token("<"),new Token("ID"), new Token("then"),
+            //    new Token("ID"),new Token("="),new Token("ID"),new Token("-"),new Token("NUM"),new Token(";"),new Token("ID"),
+            //    new Token("="),new Token("ID"),new Token("*"),new Token("NUM"),new Token(";"),new Token("ENDIF"), new Token(";")
+            //};
+
+            //Console.WriteLine("Accept: " + recognizer.Recognize(chain));
+
+
             class Sintatic
             {
                 StreamReader sr;
-                Input.Input inChain;
+                CompilerModel.Symbols.Input inChain;
                 //FileStream rulez;
                 CompilatorLivePlus.Lexer.Lexer _lex;
                 public CompilerModel.Symbols.Env _env;
@@ -26,20 +37,30 @@ namespace CompilatorLivePlus.Sintatic
 
                 public void Run()
                 {
-                    APEParser apeParser = new APEParser();
-                    StackAutomaton ape = apeParser.GetStackAutomaton();
-
-                    inChain = new CompilatorLivePlus.Input.Input();
-
+                    APEParser parser = new APEParser();
+                    StackAutomaton automaton = parser.GetStackAutomaton();
+                    Console.Write(automaton.ToString());
+                    
+                    inChain = new CompilerModel.Symbols.Input();
+                    
                     while (!_lex.hasEnded())
                     {
                         Token escan = _lex.scan();
                         inChain.Add(escan);
                     }
 
+                    inChain.resetNext();
+                    
+                    Console.ReadLine();
+
+                    Recognizer recognizer = new APE.Recognizer(automaton);
+                    Console.WriteLine("Accept: " + recognizer.Recognize(inChain));
+
+
                     while (inChain.hasNext())
                     {
                         Token _tok = inChain.getNext();
+
 
                         if (isOpenScope(_tok)) 
                         {
@@ -56,7 +77,10 @@ namespace CompilatorLivePlus.Sintatic
                         
                         _env.put(_tok, _tok.tag.ToString());
 
+                        
                     }
+
+                    
                 }
                 public bool isOpenScope(Token _tok)
                 {

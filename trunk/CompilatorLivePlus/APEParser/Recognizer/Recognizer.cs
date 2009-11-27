@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using CompilerModel.APE;
 using CompilerModel.Lexer;
+using CompilerModel.Symbols;
 using CompilerModel.Structures;
 using System.Reflection;
 using CompilerModel.Semantic;
@@ -27,7 +28,8 @@ namespace APE
 
         public bool RunTransition(Token input, Token nextToken)
         {
-
+            if (input == null)
+                return false;
             //Preferencialmente, procura-se transicoes internas
             List<Transition> internalTransitions = CurrentState.Transitions.FindAll(In => In.GetType() != typeof(SubmachineCall));
             foreach (Transition tr in internalTransitions)
@@ -106,7 +108,6 @@ namespace APE
             methodInfo.Invoke(sa, null);
         }
 
-
         private bool CheckLookAhead(State CurrentState, Token nextToken)
         {
             if (nextToken != null)
@@ -127,14 +128,15 @@ namespace APE
             CurrentState = CurrentAutomaton.Start;
         }
 
-        public bool Recognize(Token[] chain)
+        public bool Recognize(Input chain)
         {
             int i=0;
             bool error = false;
             //while (!(CurrentState.FinalState && i < chain.Length && !StateHasTransitionsForToken(CurrentState, chain[i])))
             while (!(CurrentState.FinalState && _stack.Empty))
             {
-                if (!RunTransition(chain[i], i < chain.Length-1? chain[i+1]:null))
+                //if (!RunTransition(chain[i], i < chain.Length - 1 ? chain[i + 1] : null))
+                if (!RunTransition(chain.getNext(), chain.getLookAHead()))
                 {
                     error = true;
                     break;

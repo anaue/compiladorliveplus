@@ -1,12 +1,3 @@
-program
-    fatorial_num int,
-    fatorial_res int
-begin
-    input fatorial_num;  // comentario
-    fatorial_res = fatorial_num;
-    if fatorial_num > 1 then
-        fatorial_num = fatorial_num - 1 ;
-        fatorial_res = fatorial_num * fatorial_res ;
-    endif ;
-    output fatorial_res ;
-end ;
+if 1 < abe then abe = def - 1 ;
+def = abe * 5;
+endif ;

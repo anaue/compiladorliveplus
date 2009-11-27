@@ -18,7 +18,7 @@ namespace CompilatorLivePlus.Input
             rules = _rules;
             finals = _finals;
         }
-        public bool Accept(Input _input )
+        public bool Accept(CompilerModel.Symbols.Input _input )
         {
             Token nextTok;
 

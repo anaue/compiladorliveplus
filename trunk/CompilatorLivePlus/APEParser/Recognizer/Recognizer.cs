@@ -106,6 +106,9 @@ namespace APE
             MethodInfo methodInfo = typeof(SemanticActions).GetMethod(semanticActionName);
             // Use the instance to call the method without arguments
             methodInfo.Invoke(sa, null);
+
+            CompilerModel.Trace.Tracer.putLog("Called Method: " + semanticActionName, MethodInfo.GetCurrentMethod().ReflectedType.ToString());
+
         }
 
         private bool CheckLookAhead(State CurrentState, Token nextToken)

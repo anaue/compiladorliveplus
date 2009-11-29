@@ -10,9 +10,10 @@ namespace CompilerModel.Lexer
         {
             get { return lexeme; }
         }
-        public Word(int t, string s): base(t)
+        public Word(int t, string s, int line): base(t, line)
         {
             lexeme = s;
+            base.Line = line;
         }
     }
 }

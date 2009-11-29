@@ -6,6 +6,7 @@ namespace CompilerModel.Lexer
     public class Token
     {
         public int tag;
+        public int Line;
 
         public Token(String ttag)
         {
@@ -47,9 +48,10 @@ namespace CompilerModel.Lexer
             }
         }
 
-        public Token(int t)
+        public Token(int t, int line)
         {
             tag = t;
+            Line = line;
         }
 
         public override string ToString()

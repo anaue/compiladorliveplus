@@ -35,11 +35,11 @@ namespace APE
         /// Constructor
         /// </summary>
         /// <param name="ape">Stack Automaton to be run</param>
-        public Recognizer(StackAutomaton ape)
+        public Recognizer(StackAutomaton ape, String outputFile)
         {
             _ape = ape;
             _stack = new Stack();
-            Semantic = new SemanticActions();
+            Semantic = new SemanticActions(outputFile);
             CurrentAutomaton = _ape.Automata.Find(In=>In.Name == ape.Start.Name);
             CurrentState = CurrentAutomaton.States.Find(In => In.Id == CurrentAutomaton.Start.Id);
         }

@@ -10,17 +10,24 @@ namespace CompilerModel.Semantic
     public class SemanticActions
     {
         public SymbolTable Symbols;
+        private Output _out;
 
-        public SemanticActions()
+        public SemanticActions(string outputFile)
         {
             Symbols = new SymbolTable();
+            _out = new Output(outputFile);
+        }
+
+        public void SaveOutput()
+        {
+            _out.SaveFile();
         }
 
         #region COMANDO
 
         public void AS_COMANDO_1(Env environment)
         {
-            Console.WriteLine(environment);
+            
         }
 
         public void AS_COMANDO_2(Env environment)
@@ -167,9 +174,10 @@ namespace CompilerModel.Semantic
 
         #region CODIGO
 
-        public void AS_CODIGO_1(Env environment)
+        public void AS_CODIGO_START(Env environment)
         {
-            
+            _out.WriteCommentedCode("@=0", "area de programa");
+            _out.WriteCode("JP INICIO");
         }
 
         public void AS_CODIGO_2(Env environment)

@@ -16,7 +16,7 @@ namespace APE
             StackAutomaton automaton = parser.GetStackAutomaton();
             Console.Write(automaton.ToString());
             Console.ReadLine();
-            Recognizer recognizer = new Recognizer(automaton);
+            Recognizer recognizer = new Recognizer(automaton, "test.txt");
             //{new Token("IF"), new Token("("), new Token("TRUE"), new Token(")"), new Token("BEGIN"), new Token};
             Token[] chain = new Token[] {new Token("IF"), new Token("NUM"), new Token("<"),new Token("ID"), new Token("then"),
                 new Token("ID"),new Token("="),new Token("ID"),new Token("-"),new Token("NUM"),new Token(";"),new Token("ID"),

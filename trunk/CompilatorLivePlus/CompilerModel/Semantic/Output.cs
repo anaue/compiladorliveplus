@@ -11,10 +11,12 @@ namespace CompilerModel.Semantic
         private StreamWriter _writer;
         private StringBuilder _output;
         private String _pathName;
+        public int LineCode;
 
 
         public Output(string path)
         {
+            LineCode = 0;
             _pathName = path;
             _output = new StringBuilder();
         }
@@ -22,21 +24,25 @@ namespace CompilerModel.Semantic
         public void WriteCode(string codeLine)
         {
             _output.AppendLine("\t\t" + codeLine + " ;");
+            LineCode++;
         }
 
         public void WriteCommentedCode(string codeLine, string comment)
         {
             _output.AppendLine("\t\t" + codeLine + " ;\t" + comment);
+            LineCode++;
         }
 
         public void WriteCode(string label, string codeLine)
         {
             _output.AppendLine(label + "\t" + codeLine + " ;");
+            LineCode++;
         }
 
         public void WriteCommentedCode(string label, string codeLine, string comment)
         {
             _output.AppendLine(label + "\t" + codeLine + " ;\t" + comment);
+            LineCode++;
         }
 
         public void SaveFile()
@@ -53,6 +59,12 @@ namespace CompilerModel.Semantic
         {
             return _output.ToString();
         }
-    
+
+
+        internal string GenerateVarName()
+        {
+
+            return "A";
+        }
     }
 }

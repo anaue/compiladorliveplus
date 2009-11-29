@@ -1,13 +1,13 @@
 name: comando
 initial: 0
 final: 10
-(0, "ID") -> 1 & AS_COMANDO_1
+(0, "ID") -> 1 & AS_CMD_ATRIB_1
 (0, "if") -> 2 & AS_COMANDO_2
 (0, "while") -> 3 & AS_COMANDO_3
 (0, "input") -> 4 & AS_COMANDO_4
 (0, "output") -> 5 & AS_COMANDO_5
 (0, "call") -> 6 & AS_COMANDO_6
-(1, "=") -> 5 & AS_COMANDO_7
+(1, "=") -> 5 & AS_CMD_ATRIB_2
 (2, expressao_booleana) -> 12 & AS_COMANDO_8
 (3, expressao_booleana) -> 17 & AS_COMANDO_9
 (4, "ID") -> 8 & AS_COMANDO_10

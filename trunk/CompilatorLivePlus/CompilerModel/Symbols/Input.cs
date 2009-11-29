@@ -8,7 +8,7 @@ namespace CompilerModel.Symbols
     {
         static int maxInput = 2048;
         private Token[] entrada;
-        private int level, next, lookAHead;
+        private int level, next;
 
         public Input()
         {
@@ -34,18 +34,19 @@ namespace CompilerModel.Symbols
             
             Token retorno = entrada[next];
             next++;
-            lookAHead = next;
             
             return retorno;
         }
 
         public Token getLookAHead()
         {
-            if (lookAHead == maxInput)
+            //if (lookAHead == maxInput)
+            //    return null;
+            if (next+1 > maxInput)
                 return null;
 
-            Token retorno = entrada[lookAHead];
-            lookAHead++;
+            Token retorno = entrada[next];
+            //lookAHead++;
             return retorno;
         }
         public bool hasNext()
@@ -55,7 +56,6 @@ namespace CompilerModel.Symbols
         public void resetNext()
         {
             next =1;
-            lookAHead = next + 1;
         }
         //public void LookedAHead()
         //{

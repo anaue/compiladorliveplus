@@ -6,6 +6,8 @@ using APE;
 using CompilerModel.Lexer;
 using CompilerModel.Symbols;
 using CompilerModel.APE;
+using CompilerModel.Trace;
+using CompilerModel.Structures;
 
 namespace CompilatorLivePlus.Sintatic
 {
@@ -22,98 +24,147 @@ namespace CompilatorLivePlus.Sintatic
             class Sintatic
             {
                 StreamReader sr;
-                CompilerModel.Symbols.Input inChain;
+                CompilerModel.Symbols.Input inputChain;
                 //FileStream rulez;
-                CompilatorLivePlus.Lexer.Lexer _lex;
-                public CompilerModel.Symbols.Env _env;
-                public CompilerModel.Symbols.Env _prevEnv;
+                CompilatorLivePlus.Lexer.Lexer _lexer;
+                public CompilerModel.Symbols.Env _environment;
+                public CompilerModel.Symbols.Env _previousEnvironment;
 
                 public Sintatic(CompilatorLivePlus.Lexer.Lexer lex)
                 {
-                    _lex = lex;
-                    _env = new CompilerModel.Symbols.Env( null);
+                    _lexer = lex;
+                    _environment = new CompilerModel.Symbols.Env( null);
                        //rulez = new FileStream("regras-codigo.txt", FileMode.OpenOrCreate, FileAccess.Read);
                 }
 
                 public void Run()
                 {
+
+                    //Automaton Parser
                     APEParser parser = new APEParser();
                     StackAutomaton automaton = parser.GetStackAutomaton();
-                    Console.Write(automaton.ToString());
                     
-                    inChain = new CompilerModel.Symbols.Input();
-                    
-                    while (!_lex.hasEnded())
-                    {
-                        Token escan = _lex.scan();
-                        inChain.Add(escan);
-                    }
+                    //Recognizer initialization
+                    Recognizer recognizer = new Recognizer(automaton);
 
-                    inChain.resetNext();
+                    Console.WriteLine(":: Stack automaton parsed successfully. See log.txt for details.");
+                    Tracer.putLog(":: Automaton Parsed: \n" + automaton.ToString(), this.ToString());
                     
+                    Console.Write(":: Lexer running... ");
+
+                    //An input is used here to act returning tokens to sintatic as a buffer.
+                    inputChain = new CompilerModel.Symbols.Input();
+                    while (!_lexer.hasEnded())
+                    {
+                        Token escan = _lexer.scan();
+                        inputChain.Add(escan);
+                    }
+                    inputChain.resetNext();
+
+                    Console.WriteLine(" Done!");
+
+                    //Recognizer                    
+                    Console.WriteLine(":: Sintatic will begin. Press any key to continue... ");
                     Console.ReadLine();
 
-                    Recognizer recognizer = new APE.Recognizer(automaton);
-                    Console.WriteLine("Accept: " + recognizer.Recognize(inChain));
-
-
-                    while (inChain.hasNext())
+                    int i = 0; //Just a help to debug this code w/ conditional breakpoints, can be removed later.
+                    while (inputChain.hasNext())
                     {
-                        Token _tok = inChain.getNext();
+                        Token currentToken, nextToken;
 
+                        currentToken = inputChain.getNext();
+                        nextToken = inputChain.getLookAHead();
 
-                        if (isOpenScope(_tok)) 
+                        CheckScopeEnvironment(currentToken);
+
+                        //Create a symbol for this token
+                        Symbol symbol = new Symbol();
+                        symbol.Id = currentToken.tag.ToString();
+                        symbol.Token = currentToken;
+                        recognizer.Semantic.Symbols.AddSymbol(symbol);
+
+                        if (!recognizer.RunTransition(currentToken, nextToken, _environment))
                         {
-                            // se for um token de abertura de block, salva o escopo e cria um novo
-                            _prevEnv = _env;
-                            _env = new CompilerModel.Symbols.Env(_env);
-                            
-                        }
-                        else if (isCloseScope(_tok))
-                        {
-                            _env = _prevEnv;
-                            _prevEnv = _env.Previous;
-                        }
-                        
-                        _env.put(_tok, _tok.tag.ToString());
+                            //ERRO!!
+                            Console.WriteLine("!! Syntax Error: Line " + currentToken.Line + ", Token " + currentToken.tag + " (ASCII Code) not recognized by sintatic parser.");
+                            Console.WriteLine("!! Current Automaton: " + recognizer.CurrentAutomaton.Name);
+                            Console.WriteLine("!! Current State: " + recognizer.CurrentState.Id);
+                            Console.WriteLine("!! Stack: " + GetStackAutomatonNames(recognizer.Stack));
+                            Console.WriteLine("!! i: "+i);
 
-                        
+                            break;
+                        }
+                        i++;
                     }
 
-                    
+                    if (recognizer.CurrentState.FinalState && recognizer.Stack.Empty)
+                        Console.WriteLine("\n:: Code finally compiled.");
+                    else
+                        Console.WriteLine("!! Sytax errors detected. Recognizer terminated.");
+
                 }
+
+                private string GetStackAutomatonNames(Stack stack)
+                {
+                    StringBuilder sb = new StringBuilder();
+                    while (!stack.Empty)
+                    {
+                        StackPair sp = ((StackPair)stack.Pop());
+                        sb.Append("(" + sp.Automaton.Name + "," + sp.State.Id + ")");
+                    }
+                    return sb.ToString();
+                }
+
+                private void CheckScopeEnvironment(Token _tok)
+                {
+                    if (isOpenScope(_tok))
+                    {
+                        // se for um token de abertura de block, salva o escopo e cria um novo
+                        _previousEnvironment = _environment;
+                        _environment = new CompilerModel.Symbols.Env(_environment);
+
+                    }
+                    else if (isCloseScope(_tok))
+                    {
+                        _environment = _previousEnvironment;
+                        _previousEnvironment = _environment.Previous;
+                    }
+
+                    _environment.put(_tok, _tok.tag.ToString());
+                }
+
                 public bool isOpenScope(Token _tok)
                 {
                     switch (_tok.tag)
                     {
                         case (int)Tag.PROGRAM:
                             {
-                                _env.CloseScope = (int)Tag.END;
+                                _environment.CloseScope = (int)Tag.END;
                                 return true;
                             }
                         case (int)Tag.FUNCTION:
                             {
-                                _env.CloseScope = (int)Tag.ENDFUNCTION;
+                                _environment.CloseScope = (int)Tag.ENDFUNCTION;
                                 return true;
                             }
                         case (int)Tag.SUB:
                             {
-                                _env.CloseScope = (int)Tag.ENDSUB;
+                                _environment.CloseScope = (int)Tag.ENDSUB;
                                 return true;
                             }
                         case (int)Tag.STRUCT:
                             {
-                                _env.CloseScope = (int)Tag.ENDSTRUCT;
+                                _environment.CloseScope = (int)Tag.ENDSTRUCT;
                                 return true;
                             }
                         case (int)Tag.IF:
                             {
-                                _env.CloseScope = (int)Tag.ENDIF;
+                                _environment.CloseScope = (int)Tag.ENDIF;
                                 return true;
                             }
                         case (int)Tag.WHILE:
                             {
-                                _env.CloseScope = (int)Tag.ENDLOOP;
+                                _environment.CloseScope = (int)Tag.ENDLOOP;
                                 return true;
                             }
                     }
@@ -122,8 +173,8 @@ namespace CompilatorLivePlus.Sintatic
 
                 public bool isCloseScope(Token _tok)
                 {
-                    if (_prevEnv != null)
-                        return _tok.tag == _prevEnv.CloseScope;
+                    if (_previousEnvironment != null)
+                        return _tok.tag == _previousEnvironment.CloseScope;
                     else
                         return false;
                 }

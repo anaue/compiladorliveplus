@@ -1,7 +1,7 @@
 name: codigo
 initial: 0
 final: 11
-(0, "ID") -> 1 & AS_CODIGO__CODIGO_1
+(0, "ID") -> 1 & AS_CODIGO_1
 (0, "function") -> 2 & AS_CODIGO_2
 (0, "sub") -> 3 & AS_CODIGO_3
 (0, "program") -> 4 & AS_CODIGO_4

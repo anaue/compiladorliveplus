@@ -11,19 +11,18 @@ namespace CompilatorLivePlus
 
         static void Main(string[] args)
         {
-            CompilatorLivePlus.Lexer.Lexer lex = new CompilatorLivePlus.Lexer.Lexer();
-            try
-            {       
-
+            CompilatorLivePlus.Lexer.Lexer lex = new CompilatorLivePlus.Lexer.Lexer("Input/entrada_lexico.txt");
+            //try
+            //{       
                 Sintatic.Sintatic sint = new CompilatorLivePlus.Sintatic.Sintatic(lex);
                 sint.Run();
                 Console.WriteLine("Linhas:" + lex.line);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Erro na linha:" + lex.line);
-                Console.WriteLine(ex.Message);
-            }
+            //}
+            //catch (Exception ex)
+            //{
+            //    Console.WriteLine("Erro na linha:" + lex.line);
+            //    Console.WriteLine(ex.Message);
+            //}
 
 #if TESTELEXICO
 

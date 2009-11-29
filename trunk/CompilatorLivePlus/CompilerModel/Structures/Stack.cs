@@ -10,15 +10,8 @@ namespace CompilerModel.Structures
         private Node first = null;
         private int count = 0;
 
-        /******************************************************************************************************************
-        Property Procedures do not accept any parameters. Note the diff in the function definition (no parenthesis)
-        *******************************************************************************************************************/
-
         public bool Empty
         {
-            /*******************************************
-            Property Get Procedure
-            ********************************************/
             get
             {
                 return (first == null);
@@ -27,9 +20,6 @@ namespace CompilerModel.Structures
 
         public int Count
         {
-            /*******************************************
-            Property Get Procedure
-            ********************************************/
             get
             {
                 return count;

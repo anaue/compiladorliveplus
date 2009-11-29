@@ -12,7 +12,8 @@ namespace CompilerModel.Lexer
         {
             get { return this.value; }
         }
-        public Num(int v): base((int)Tag.NUM)
+        public Num(int v, int line)
+            : base((int)Tag.NUM, line)
         {
             value = v;
         }

@@ -64,7 +64,7 @@ namespace APE
                     CurrentState = CurrentAutomaton.States.Find(In => In.Id == tr.NextState.Id);
                     
                     //Chamada da acao semantica
-                    RunSemanticAction(tr.SemanticActionName, currentEnvironment);
+                    RunSemanticAction(tr.SemanticActionName, currentEnvironment, input);
 
                     if (CurrentState.FinalState && !CheckLookAhead(CurrentState, nextToken))
                     {
@@ -73,6 +73,7 @@ namespace APE
                             StackPair stackPair = (StackPair)_stack.Pop();
                             GoToSubmachine(stackPair.Automaton, stackPair.State);
                         }
+
                         return true;
                     }
 
@@ -123,6 +124,7 @@ namespace APE
                     GoToSubmachine(stackPair.Automaton, stackPair.State);
                     RunTransition(input, nextToken, currentEnvironment);
                 }
+
                 return true;
             }
             return false;
@@ -133,11 +135,11 @@ namespace APE
         /// </summary>
         /// <param name="semanticActionName">Nome da Acao semantica</param>
         /// <param name="currentEnvironment">Ambiente corrente</param>
-        public void RunSemanticAction(String semanticActionName, Env currentEnvironment)
+        public void RunSemanticAction(String semanticActionName, Env currentEnvironment, Token input)
         {
-            MethodInfo methodInfo = typeof(SemanticActions).GetMethod(semanticActionName);
+            MethodInfo methodInfo = typeof(SemanticActions).GetMethod(semanticActionName,new[]{typeof(Env), typeof(Token)});
             // Use the instance to call the method without arguments
-            methodInfo.Invoke(Semantic, new Env[] {currentEnvironment});
+            methodInfo.Invoke(Semantic, new Object []{currentEnvironment, input});
             CompilerModel.Trace.Tracer.putLog("Called Method: " + semanticActionName, MethodInfo.GetCurrentMethod().ReflectedType.ToString());
 
         }

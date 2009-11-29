@@ -8,23 +8,26 @@ namespace CompilerModel.Symbols
 {
     public class Env
     {
-        private Hashtable table;
+        public SymbolTable Symbols;
         public Env Previous;
         public int CloseScope;
         public Env(Env n)
         {
-            table = new Hashtable();
+            Symbols = new SymbolTable();
             Previous  = n;
         }
-        public void put(Token w, string id)
+        public void AddSymbol(Token _tok)
         {
-            table.Add(id, w);
+            Symbol _sym = new Symbol();
+            _sym.Id = _tok.tag.ToString();
+            _sym.Token = _tok;
+            Symbols.AddSymbol(_sym);
         }
-        public string get(Token w)
+        public Symbol GetSymbol(Token _tok)
         {
             for (Env e = this; e != null; e = e.Previous)
             {
-                string found = (string)(e.table.getChave(w.ToString()));
+                Symbol found = e.Symbols.GetSymbol(_tok.ToString());
                 if (found != null)
                     return found;
             }

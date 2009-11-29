@@ -65,13 +65,14 @@ namespace CompilatorLivePlus.Sintatic
                 currentToken = inputChain.getNext();
                 nextToken = inputChain.getLookAHead();
 
-                CheckScopeEnvironment(currentToken);
-
-                //Create a symbol for this token
-                Symbol symbol = new Symbol();
-                symbol.Id = currentToken.tag.ToString();
-                symbol.Token = currentToken;
-                recognizer.Semantic.Symbols.AddSymbol(symbol);
+                //ManageScopeEnvironment(currentToken);
+                if (isOpenScope(currentToken))
+                {
+                    // se for um token de abertura de block, salva o escopo e cria um novo
+                    _previousEnvironment = _environment;
+                    _environment = new CompilerModel.Symbols.Env(_environment);
+                    Tracer.putLog("Escopo Aberto", "Sintatic");
+                }
 
                 if (!recognizer.RunTransition(currentToken, nextToken, _environment))
                 {
@@ -84,6 +85,13 @@ namespace CompilatorLivePlus.Sintatic
 
                     break;
                 }
+                if (isCloseScope(currentToken))
+                {
+                    _environment = _previousEnvironment;
+                    _previousEnvironment = _environment.Previous;
+                    Tracer.putLog("Escopo Fechado", "Sintatic");
+                }
+
                 i++;
             }
 
@@ -108,23 +116,24 @@ namespace CompilatorLivePlus.Sintatic
             return sb.ToString();
         }
 
-        private void CheckScopeEnvironment(Token _tok)
-        {
-            if (isOpenScope(_tok))
-            {
-                // se for um token de abertura de block, salva o escopo e cria um novo
-                _previousEnvironment = _environment;
-                _environment = new CompilerModel.Symbols.Env(_environment);
+        //private void ManageScopeEnvironment(Token _tok)
+        //{
+        //    if (isOpenScope(currentToken))
+        //    {
+        //        // se for um token de abertura de block, salva o escopo e cria um novo
+        //        _previousEnvironment = _environment;
+        //        _environment = new CompilerModel.Symbols.Env(_environment);
+        //        Tracer.putLog("Escopo Aberto", "Sintatic");
+        //    }
+        //    else if (isCloseScope(_tok))
+        //    {
+        //        _environment = _previousEnvironment;
+        //        _previousEnvironment = _environment.Previous;
+        //        Tracer.putLog("Escopo Fechado", "Sintatic");
+        //    }
 
-            }
-            else if (isCloseScope(_tok))
-            {
-                _environment = _previousEnvironment;
-                _previousEnvironment = _environment.Previous;
-            }
-
-            _environment.put(_tok, _tok.tag.ToString());
-        }
+        //    _environment.AddSymbol(_tok);
+        //}
 
         public bool isOpenScope(Token _tok)
         {

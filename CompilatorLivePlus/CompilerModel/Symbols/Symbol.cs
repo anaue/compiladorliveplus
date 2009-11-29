@@ -14,5 +14,8 @@ namespace CompilerModel.Symbols
         public string Type;
         public object OperationalValue;
         public string PrintableValue;
+        public bool Initialized;
+        public bool Used;
+        //public bool MemoryPosition;
     }
 }

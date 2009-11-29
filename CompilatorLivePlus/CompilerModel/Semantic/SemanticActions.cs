@@ -23,6 +23,8 @@ namespace CompilerModel.Semantic
             _out.SaveFile();
         }
 
+        #region ACOES SEMANTICAS
+
         #region COMANDO
 
         public void AS_COMANDO_1(Env environment)
@@ -779,5 +781,7 @@ namespace CompilerModel.Semantic
 
 
         #endregion TIPO Automata
+
+        #endregion ACOES SEMANTICAS
     }
 }

@@ -5,7 +5,7 @@ using System.Text;
 namespace CompilerModel.Trace
 {
 
-    class Tracer
+    public class Tracer
     {
         
         static StreamWriter _log;
@@ -18,7 +18,7 @@ namespace CompilerModel.Trace
         {
             try
             {
-                string record = (_typeClass + ":" + _msg);
+                string record = (_typeClass + ": " + _msg);
               
                 using (StreamWriter _log = new StreamWriter("log.txt", true))
                 {

@@ -12,17 +12,17 @@ namespace CompilerModel.Semantic
 
         public void AS_COMANDO_1()
         {
-            Console.WriteLine("It's alive!");
+
         }
 
         public void AS_COMANDO_2()
         {
-            
+
         }
 
         public void AS_COMANDO_3()
         {
-            
+
         }
 
         public void AS_COMANDO_4()
@@ -42,117 +42,117 @@ namespace CompilerModel.Semantic
 
         public void AS_COMANDO_7()
         {
-
+            
         }
 
         public void AS_COMANDO_8()
         {
-
+            
         }
 
         public void AS_COMANDO_9()
         {
-
+            
         }
 
         public void AS_COMANDO_10()
         {
-
+            
         }
 
         public void AS_COMANDO_11()
         {
-
+            
         }
 
         public void AS_COMANDO_12()
         {
-
+            
         }
 
         public void AS_COMANDO_13()
         {
-
+            
         }
 
         public void AS_COMANDO_14()
         {
-
+            
         }
 
         public void AS_COMANDO_15()
         {
-
+            
         }
 
         public void AS_COMANDO_16()
         {
-
+            
         }
 
         public void AS_COMANDO_17()
         {
-
+            
         }
 
         public void AS_COMANDO_18()
         {
-
+            
         }
 
         public void AS_COMANDO_19()
         {
-
+            
         }
 
         public void AS_COMANDO_20()
         {
-
+            
         }
 
         public void AS_COMANDO_21()
         {
-
+            
         }
 
         public void AS_COMANDO_22()
         {
-
+            
         }
 
         public void AS_COMANDO_23()
         {
-
+            
         }
 
         public void AS_COMANDO_24()
         {
-
+            
         }
 
         public void AS_COMANDO_25()
         {
-
+            
         }
 
         public void AS_COMANDO_26()
         {
-
+            
         }
 
         public void AS_COMANDO_27()
         {
-
+            
         }
 
         public void AS_COMANDO_28()
         {
-
+            
         }
 
         public void AS_COMANDO_29()
         {
-
+            
         }
 
         #endregion COMANDO Automata

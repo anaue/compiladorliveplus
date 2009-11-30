@@ -28,6 +28,17 @@ namespace APE
             //Console.WriteLine("Accept: " + recognizer.Recognize(chain));
 
             Console.ReadLine();
+
+            System.Diagnostics.ProcessStartInfo procInfo = new System.Diagnostics.ProcessStartInfo("cmd", "/c" + "java -jar mvn\\montador.jar Output\\mvn.txt");
+            procInfo.RedirectStandardOutput = true;
+            procInfo.UseShellExecute = false;
+            procInfo.CreateNoWindow = true;
+
+            System.Diagnostics.Process process = new System.Diagnostics.Process();
+            process.StartInfo = procInfo;
+            process.Start();
+            Console.ReadLine();
         }
+
     }
 }

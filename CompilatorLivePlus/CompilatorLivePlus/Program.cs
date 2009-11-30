@@ -46,7 +46,25 @@ namespace CompilatorLivePlus
             //    Console.WriteLine(ex.Message);
             //}
             //Console.ReadLine();
-            
+
+            //Start MVN
+
+                Console.WriteLine("Press enter to start MVN execution...");
+                Console.ReadLine();
+                System.Diagnostics.ProcessStartInfo procInfo = new System.Diagnostics.ProcessStartInfo("java -jar mvn\\montador.jar Output\\mvn.txt");
+                procInfo.RedirectStandardOutput = true;
+                procInfo.UseShellExecute = false;
+                procInfo.CreateNoWindow = true;
+
+                System.Diagnostics.Process process = new System.Diagnostics.Process();
+                process.StartInfo = procInfo;
+                process.Start();
+
+                string result = process.StandardOutput.ReadToEnd();
+
+                Console.WriteLine(result);
+                Console.ReadLine();
+
         }
        
 

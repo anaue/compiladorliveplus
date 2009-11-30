@@ -11,6 +11,7 @@ namespace CompilerModel.Symbols
         public string Id;
         public Token Token;
         public string Name;
+        public string TargetName;
         public string Type;
         public object OperationalValue;
         public string PrintableValue;

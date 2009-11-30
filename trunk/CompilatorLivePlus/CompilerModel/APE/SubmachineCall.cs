@@ -9,10 +9,11 @@ namespace CompilerModel.APE
     {
         public Automaton CalledAutomaton;
 
-        public SubmachineCall(State backState, Automaton called)
+        public SubmachineCall(State backState, Automaton called, String semanticActionName)
         {
             base.NextState = backState;
             this.CalledAutomaton = called;
+            base.SemanticActionName = semanticActionName;
         }
 
     }

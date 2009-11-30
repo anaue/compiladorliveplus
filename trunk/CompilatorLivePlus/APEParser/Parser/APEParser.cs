@@ -135,11 +135,11 @@ namespace APE.Parser
                                     Automaton refAutomaton;
                                     parentAutomata.Add(automaton);
                                     refAutomaton = (new APEParser()).GetAutomaton(name, parentAutomata);
-                                    subMachineCall = new SubmachineCall(nextState, refAutomaton);
+                                    subMachineCall = new SubmachineCall(nextState, refAutomaton,semanticActionName);
                                     stackAutomaton.addAutomaton(refAutomaton);
                                 }
                                 else
-                                    subMachineCall = new SubmachineCall(nextState, automaton);
+                                    subMachineCall = new SubmachineCall(nextState, automaton,semanticActionName);
 
                                 currentState.addTransition(subMachineCall);
                             }

@@ -41,4 +41,12 @@ namespace CompilerModel.Lexer
         NUM = 289,
         ID = 290
     }
+
+    public enum Operator
+    {
+        TIMES = 42,
+        PLUS = 43,
+        MINUS = 45,
+        DIV = 47
+    }
 }

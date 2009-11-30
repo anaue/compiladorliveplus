@@ -19,18 +19,30 @@ namespace CompilerModel.Symbols
         public void AddSymbol(Token _tok)
         {
             Symbol _sym = new Symbol();
-            _sym.Id = _tok.tag.ToString();
-            _sym.Token = _tok;
+            if (typeof(Word) == _tok.GetType())
+            {
+                _sym.Id = ((Word)_tok).Lexeme;
+                _sym.Token = _tok;
+                Symbols.AddSymbol(_sym);
+            }
+        }
+        public void AddSymbol(Symbol _sym)
+        {
             Symbols.AddSymbol(_sym);
         }
         public Symbol GetSymbol(Token _tok)
         {
-            for (Env e = this; e != null; e = e.Previous)
+            if (typeof(Word) == _tok.GetType())
             {
-                Symbol found = e.Symbols.GetSymbol(_tok.ToString());
-                if (found != null)
-                    return found;
+
+                for (Env e = this; e != null; e = e.Previous)
+                {
+                    Symbol found = e.Symbols.GetSymbol(((Word)_tok).Lexeme);
+                    if (found != null)
+                        return found;
+                }
             }
+
             return null;
         }
     }

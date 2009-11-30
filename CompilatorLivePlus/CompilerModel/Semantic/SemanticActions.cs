@@ -165,7 +165,7 @@ namespace CompilerModel.Semantic
         public void AS_COMANDO_ATRIB_3(Env _environment, Token _tok)
         {
             //o token devera ser um ID ou '(' do booleano
-            
+            //_environment.AddSymbol(_acc);
         }
 
         public void AS_COMANDO_12(Env _environment, Token _tok)
@@ -245,7 +245,7 @@ namespace CompilerModel.Semantic
             //_out.WriteCommentedCode("JN " + _labelFalse, "SE FOR MENOR, PULA"); 
 
             _acc = new Symbol();
-            _acc.Token = _tok;            
+            _acc.Token = _tok;
         }
 
         public void AS_COMANDO_19(Env _environment, Token _tok)
@@ -367,6 +367,19 @@ namespace CompilerModel.Semantic
         /// <param name="_tok"></param>
         public void AS_CODIGO_BEGIN(Env _environment, Token _tok)
         {
+            if (_reg1 != null)
+            {
+                _reg1.Id = ((Word)_reg1.Token).Lexeme;
+
+                if (_acc != null)
+                {
+                    _reg1.Type = ((Word)_acc.Token).Lexeme; // atribuicao do tipo recebido
+                    _environment.AddSymbol(_reg1);
+                    _out.WriteCommentedCode(_reg1.TargetName + " K /0", "AS_CODIGO_DECLARE_2");
+                }
+            }
+            _reg1 = null;
+
             _out.WriteCommentedCode("@ /256", "area de programa");
             _out.SetLabelCode("INICIO");
         }
@@ -444,7 +457,6 @@ namespace CompilerModel.Semantic
                     _environment.AddSymbol(_reg1);
                     _out.WriteCommentedCode(_reg1.TargetName + " K /0", "AS_CODIGO_DECLARE_2");
                 }
-                
             }
             _reg1 = null;
         }

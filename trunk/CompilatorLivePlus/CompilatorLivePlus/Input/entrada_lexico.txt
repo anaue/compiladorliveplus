@@ -1,7 +1,6 @@
 program
     fatorial_num int,
     fatorial_res int
-    //fatorial_res int[3]
 begin
     fatorial_num = 3;
     fatorial_res = fatorial_num;

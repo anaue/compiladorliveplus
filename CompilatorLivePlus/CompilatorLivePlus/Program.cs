@@ -45,7 +45,7 @@ namespace CompilatorLivePlus
             //    Console.WriteLine("Erro na linha:" + lex.line);
             //    Console.WriteLine(ex.Message);
             //}
-            Console.ReadLine();
+            //Console.ReadLine();
             
         }
        

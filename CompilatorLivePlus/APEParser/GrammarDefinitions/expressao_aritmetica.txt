@@ -1,20 +1,20 @@
 name: expressao_aritmetica
 initial: 0
 final: 1, 2
-(0, "ID") -> 1 & AS_EA_1
-(0, "NUM") -> 2 & AS_EA_2
+(0, "ID") -> 1 & AS_EA_ID
+(0, "NUM") -> 2 & AS_EA_NUM
 (0, "(") -> 3 & AS_EA_3
 (1, "(") -> 4 & AS_EA_4
-(1, "^") -> 0 & AS_EA_5
-(1, "*") -> 0 & AS_EA_6
-(1, "/") -> 0 & AS_EA_7
-(1, "-") -> 0 & AS_EA_8
-(1, "+") -> 0 & AS_EA_9
-(2, "^") -> 0 & AS_EA_10
-(2, "*") -> 0 & AS_EA_11
-(2, "/") -> 0 & AS_EA_12
-(2, "-") -> 0 & AS_EA_13
-(2, "+") -> 0 & AS_EA_14
+(1, "^") -> 0 & AS_EA_EXPONENCIAL
+(1, "*") -> 0 & AS_EA_MULTI
+(1, "/") -> 0 & AS_EA_DIVISAO
+(1, "-") -> 0 & AS_EA_SUBTRACAO
+(1, "+") -> 0 & AS_EA_SOMA
+(2, "^") -> 0 & AS_EA_EXPONENCIAL
+(2, "*") -> 0 & AS_EA_MULTI
+(2, "/") -> 0 & AS_EA_DIVISAO
+(2, "-") -> 0 & AS_EA_SUBTRACAO
+(2, "+") -> 0 & AS_EA_SOMA
 (3, expressao_aritmetica) -> 5 & AS_EA_15
 (4, "ID") -> 6 & AS_EA_16
 (4, expressao_aritmetica) -> 5 & AS_EA_17

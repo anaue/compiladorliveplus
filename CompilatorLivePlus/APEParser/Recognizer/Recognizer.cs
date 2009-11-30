@@ -93,6 +93,8 @@ namespace APE
                     _stack.Push(new StackPair(CurrentAutomaton, call.NextState));
                     GoToSubmachine(call.CalledAutomaton);
                     RunTransition(input, nextToken, currentEnvironment);
+                    //Chamada da acao semantica no retorno da submaquina
+                    RunSemanticAction(call.SemanticActionName, currentEnvironment, input);
                     return true;
                 }
                 else

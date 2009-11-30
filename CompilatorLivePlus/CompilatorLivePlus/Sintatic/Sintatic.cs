@@ -39,7 +39,7 @@ namespace CompilatorLivePlus.Sintatic
             Recognizer recognizer = new Recognizer(automaton, mvnPath);
 
             Console.WriteLine(":: Stack automaton parsed successfully. See log.txt for details.");
-            Tracer.putLog(":: Automaton Parsed: \n" + automaton.ToString(), this.ToString());
+            //Tracer.putLog(":: Automaton Parsed: \n" + automaton.ToString(), this.ToString());
 
             Console.Write(":: Lexer starting... ");
 
@@ -73,6 +73,8 @@ namespace CompilatorLivePlus.Sintatic
                     _environment = new CompilerModel.Symbols.Env(_environment);
                     Tracer.putLog("Escopo Aberto", "Sintatic");
                 }
+                
+                
 
                 if (!recognizer.RunTransition(currentToken, nextToken, _environment))
                 {

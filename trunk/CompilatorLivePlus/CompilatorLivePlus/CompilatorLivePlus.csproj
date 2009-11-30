@@ -97,6 +97,7 @@
   </Target>
   -->
   <PropertyGroup>
-    <PostBuildEvent>java -jar mvn\montador.jar Output\mvn.txt</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
 </Project>

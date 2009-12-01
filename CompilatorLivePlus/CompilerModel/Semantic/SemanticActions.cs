@@ -39,6 +39,7 @@ namespace CompilerModel.Semantic
         private Output _out;
         private Symbol _reg1;
         private Symbol _acc; // tipo do valor no acumulador
+        private string _rtCall;
         private int _sizeVAR;
         
         private int _typeCMD;
@@ -78,17 +79,10 @@ namespace CompilerModel.Semantic
         {
             _typeCMD = (int)CommandType.ATRIB;
             _reg1 = _environment.GetSymbol( _tok );
-            if (_reg1 != null)
-            {
-                _reg1.TargetName = _out.GenerateVarName(_reg1.Name);
-                
-            }
-            else
-            {
+
+            if (_reg1 == null)
                 throw new Exception("SEMANTIC: variable not declared");
 
-            }
-            //_out.WriteCommentedCode("", "AS_COMANDO_ATRIB_1");
         }
 
         public void AS_COMANDO_IF(Env _environment, Token _tok)
@@ -188,7 +182,7 @@ namespace CompilerModel.Semantic
                         {
                             //_buffer.Initialized = true;
                             //_buffer.Used = true;
-                            _out.WriteCommentedCode("MM " + _reg1.TargetName, "AS_COMANDO_EXIT");
+                            _out.WriteCode("MM " + _reg1.TargetName, "AS_COMANDO_EXIT");
                         }
                         break;
                     }
@@ -236,7 +230,7 @@ namespace CompilerModel.Semantic
 
         public void AS_COMANDO_THEN(Env _environment, Token _tok)
         {
-            _out.WriteCommentedCode("MM " + REG2, "AS_COMANDO_THEN");
+            _out.WriteCode("MM " + REG2, "AS_COMANDO_THEN");
 
             resultado_booleano("AS_COMANDO_THEN");
 
@@ -280,7 +274,7 @@ namespace CompilerModel.Semantic
 
         public void AS_COMANDO_LOOP(Env _environment, Token _tok)
         {
-            _out.WriteCommentedCode("MM " + REG2, "AS_COMANDO_LOOP");
+            _out.WriteCode("MM " + REG2, "AS_COMANDO_LOOP");
 
             resultado_booleano("AS_COMANDO_LOOP");
 
@@ -298,7 +292,7 @@ namespace CompilerModel.Semantic
 
         public void AS_COMANDO_ENDLOOP(Env _environment, Token _tok)
         {
-            _out.WriteCommentedCode("JP WHILE"," RETORNA PARA O LOOP");
+            _out.WriteCode("JP WHILE"," RETORNA PARA O LOOP");
             _out.SetLabelCode(LABELFALSE);
         }
 
@@ -309,21 +303,19 @@ namespace CompilerModel.Semantic
         public void AS_CODIGO_START(Env _environment, Token _tok)
         {
             //_out.WriteCode("INPUT K /0");
-            _out.WriteCode("JP INICIO");
-            _out.WriteCode(REG1+" K /0"); // CRIA UMA VARIAVEL AUXILIAR PARA CONTAS
-            _out.WriteCode(REG2+" K /0"); // CRIA UMA VARIAVEL AUXILIAR PARA CONTAS
-            _out.WriteCode(REG3 + " K /0"); // CRIA UMA VARIAVEL AUXILIAR PARA CONTAS
-
+            _out.WriteVarArea(REG1+" K /0"); // CRIA UMA VARIAVEL AUXILIAR PARA CONTAS
+            _out.WriteVarArea(REG2+" K /0"); // CRIA UMA VARIAVEL AUXILIAR PARA CONTAS
+            _out.WriteVarArea(REG3 + " K /0"); // CRIA UMA VARIAVEL AUXILIAR PARA CONTAS
         }
 
-        public void AS_CODIGO_2(Env _environment, Token _tok)
+        public void AS_CODIGO_FUNCTION(Env _environment, Token _tok)
         {
 
         }
 
-        public void AS_CODIGO_3(Env _environment, Token _tok)
+        public void AS_CODIGO_SUB(Env _environment, Token _tok)
         {
-
+            _out._reserved = true;
         }
 
         public void AS_CODIGO_4(Env _environment, Token _tok)
@@ -341,8 +333,12 @@ namespace CompilerModel.Semantic
 
         }
 
-        public void AS_CODIGO_7(Env _environment, Token _tok)
+        public void AS_CODIGO_SUB_ID(Env _environment, Token _tok)
         {
+           
+            _rtCall = ((Word)_tok).Lexeme;
+            _out.SetLabelCode(_rtCall);
+            _out.WriteCode("JP /000","AS_CODIGO_SUB_ID");
 
         }
 
@@ -374,27 +370,18 @@ namespace CompilerModel.Semantic
                 if (_acc != null)
                 {
                     _reg1.Type = ((Word)_acc.Token).Lexeme; // atribuicao do tipo recebido
+                    _reg1.TargetName += _out.MemoryLines;
                     _environment.AddSymbol(_reg1);
-                    _out.WriteCommentedCode(_reg1.TargetName + " K /0", "AS_CODIGO_DECLARE_2");
+                    _out.WriteVarArea(_reg1.TargetName  + " K /0");
                 }
             }
             _reg1 = null;
 
-            _out.WriteCommentedCode("@ /256", "area de programa");
+            _out.WriteCode("@ /" + (2 *_out.MemoryLines).ToString("X"), "area de programa");
             _out.SetLabelCode("INICIO");
         }
 
         public void AS_CODIGO_10(Env _environment, Token _tok)
-        {
-
-        }
-
-        public void AS_CODIGO_11(Env _environment, Token _tok)
-        {
-
-        }
-
-        public void AS_CODIGO_12(Env _environment, Token _tok)
         {
 
         }
@@ -427,7 +414,7 @@ namespace CompilerModel.Semantic
 
         public void AS_CODIGO_ENDPROGRAM(Env _environment, Token _tok)
         {
-            _out.WriteCommentedCode("HM /0", "AS_CODIGO_ENDPROGRAM");
+            _out.WriteCode("HM /0", "AS_CODIGO_ENDPROGRAM");
         }
 
         public void AS_CODIGO_19(Env _environment, Token _tok)
@@ -454,8 +441,9 @@ namespace CompilerModel.Semantic
                 if (_acc != null)
                 {
                     _reg1.Type = ((Word)_acc.Token).Lexeme; // atribuicao do tipo recebido
+                    _reg1.TargetName += _out.MemoryLines;
                     _environment.AddSymbol(_reg1);
-                    _out.WriteCommentedCode(_reg1.TargetName + " K /0", "AS_CODIGO_DECLARE_2");
+                    _out.WriteVarArea(_reg1.TargetName +" K /0");
                 }
             }
             _reg1 = null;
@@ -511,7 +499,7 @@ namespace CompilerModel.Semantic
 
         }
 
-        public void AS_CODIGO_35(Env _environment, Token _tok)
+        public void AS_CODIGO_SUB_OPENBRAC(Env _environment, Token _tok)
         {
 
         }
@@ -526,7 +514,7 @@ namespace CompilerModel.Semantic
 
         }
 
-        public void AS_CODIGO_38(Env _environment, Token _tok)
+        public void AS_CODIGO_SUB_CLOSEBRAC(Env _environment, Token _tok)
         {
 
         }
@@ -541,13 +529,21 @@ namespace CompilerModel.Semantic
 
         }
 
-        public void AS_CODIGO_41(Env _environment, Token _tok)
+        public void AS_CODIGO_SUB_BEGIN(Env _environment, Token _tok)
         {
+            if (_reg1 != null)
+            {
+                _reg1.Id = ((Word)_reg1.Token).Lexeme;
 
-        }
-
-        public void AS_CODIGO_42(Env _environment, Token _tok)
-        {
+                if (_acc != null)
+                {
+                    _reg1.Type = ((Word)_acc.Token).Lexeme; // atribuicao do tipo recebido
+                    _reg1.TargetName += _out.MemoryLines;
+                    _environment.AddSymbol(_reg1);
+                    _out.WriteVarArea(_reg1.TargetName + " K /0");
+                }
+            }
+            _reg1 = null;
 
         }
 
@@ -555,18 +551,7 @@ namespace CompilerModel.Semantic
         {
 
         }
-
         public void AS_CODIGO_44(Env _environment, Token _tok)
-        {
-
-        }
-
-        public void AS_CODIGO_45(Env _environment, Token _tok)
-        {
-
-        }
-
-        public void AS_CODIGO_46(Env _environment, Token _tok)
         {
 
         }
@@ -581,17 +566,13 @@ namespace CompilerModel.Semantic
 
         }
 
-        public void AS_CODIGO_49(Env _environment, Token _tok)
+        public void AS_CODIGO_ENDSUB(Env _environment, Token _tok)
         {
-
+            _out.WriteCode("RS "+_rtCall);
+            _out._reserved = false;
         }
 
         public void AS_CODIGO_50(Env _environment, Token _tok)
-        {
-
-        }
-
-        public void AS_CODIGO_51(Env _environment, Token _tok)
         {
 
         }
@@ -601,16 +582,10 @@ namespace CompilerModel.Semantic
 
         }
 
-        public void AS_CODIGO_53(Env _environment, Token _tok)
-        {
-
-        }
-
         public void AS_CODIGO_54(Env _environment, Token _tok)
         {
 
         }
-
         public void AS_CODIGO_55(Env _environment, Token _tok)
         {
 
@@ -663,7 +638,7 @@ namespace CompilerModel.Semantic
             if (_sym == null)
                 throw new Exception("SEMANTIC: var not declared");
 
-            _sym.TargetName = _out.GenerateVarName(_sym.Name);
+           // _sym.TargetName = _out.GenerateVarName(_sym.Name);
             
 
             RealizaOperacaoBoolAritm(_acc, _sym);
@@ -800,7 +775,7 @@ namespace CompilerModel.Semantic
             {
                 _acc = new Symbol();
                 _acc.Token = _tok;
-                _out.WriteCommentedCode("MM "+ REG1, "AS_EB_MAIOR");
+                _out.WriteCode("MM "+ REG1, "AS_EB_MAIOR");
             }
             else
             {
@@ -983,11 +958,12 @@ namespace CompilerModel.Semantic
                 _acc.Type += "]";
                 if (_acc != null)
                 {
-
                     _reg1.Type = _acc.Type;
+                    _reg1.TargetName += _out.MemoryLines;
                     _environment.AddSymbol(_reg1);
-                    _out.WriteReservedArea("P" + _reg1.TargetName + " K " + _reg1.TargetName);
-                    _out.WriteReservedArea(_reg1.TargetName + " $ " + _sizeVAR);
+
+                    _out.WriteVarArea("P" + _reg1.TargetName + " K " + _reg1.TargetName);
+                    _out.WriteVarArea(_reg1.TargetName + " $ " + _sizeVAR);
                 }
             }
 
@@ -1035,47 +1011,47 @@ namespace CompilerModel.Semantic
             {
                 case (int)BoolOperator.MAIOR:
                     {
-                        _out.WriteCommentedCode("LD " + REG1, _comment);
-                        _out.WriteCommentedCode("- " + REG2, "COD COMPLEMENTAR BOOLEANO");
-                        _out.WriteCommentedCode("JN " + LABELFALSE, "SE FOR MENOR, PULA");
-                        _out.WriteCommentedCode("JZ " + LABELFALSE, "SE FOR IGUAL, PULA");
+                        _out.WriteCode("LD " + REG1, _comment);
+                        _out.WriteCode("- " + REG2, "COD COMPLEMENTAR BOOLEANO");
+                        _out.WriteCode("JN " + LABELFALSE, "SE FOR MENOR, PULA");
+                        _out.WriteCode("JZ " + LABELFALSE, "SE FOR IGUAL, PULA");
                         break;
                     }
                 case (int)BoolOperator.MENOR:
                     {
-                        _out.WriteCommentedCode("LD " + REG2, _comment);
-                        _out.WriteCommentedCode("- " + REG1, "COD COMPLEMENTAR BOOLEANO");
-                        _out.WriteCommentedCode("JN " + LABELFALSE, "SE FOR MENOR, PULA");
-                        _out.WriteCommentedCode("JZ " + LABELFALSE, "SE FOR IGUAL, PULA");
+                        _out.WriteCode("LD " + REG2, _comment);
+                        _out.WriteCode("- " + REG1, "COD COMPLEMENTAR BOOLEANO");
+                        _out.WriteCode("JN " + LABELFALSE, "SE FOR MENOR, PULA");
+                        _out.WriteCode("JZ " + LABELFALSE, "SE FOR IGUAL, PULA");
                         break;
                     }
                 case (int)BoolOperator.MAIORIGUAL:
                     {
-                        _out.WriteCommentedCode("LD " + REG2, _comment);
-                        _out.WriteCommentedCode("- " + REG1, "COD COMPLEMENTAR BOOLEANO");
-                        _out.WriteCommentedCode("JN " + LABELFALSE, "SE FOR MENOR, PULA");
+                        _out.WriteCode("LD " + REG2, _comment);
+                        _out.WriteCode("- " + REG1, "COD COMPLEMENTAR BOOLEANO");
+                        _out.WriteCode("JN " + LABELFALSE, "SE FOR MENOR, PULA");
 
                         break;
                     }
                 case (int)BoolOperator.MENORIGUAL:
                     {
-                        _out.WriteCommentedCode("LD " + REG2, _comment);
-                        _out.WriteCommentedCode("- " + REG1, "COD COMPLEMENTAR BOOLEANO");
-                        _out.WriteCommentedCode("JN " + LABELFALSE, "SE FOR MENOR, PULA");
+                        _out.WriteCode("LD " + REG2, _comment);
+                        _out.WriteCode("- " + REG1, "COD COMPLEMENTAR BOOLEANO");
+                        _out.WriteCode("JN " + LABELFALSE, "SE FOR MENOR, PULA");
                         break;
                     }
                 case (int)BoolOperator.IGUAL:
                     {
-                        _out.WriteCommentedCode("LD " + REG1, _comment);
+                        _out.WriteCode("LD " + REG1, _comment);
                         //_out.WriteCommentedCode("- " + _varReg2, "COD COMPLEMENTAR BOOLEANO");
                         //_out.WriteCommentedCode("JN " + _labelFalse, "SE FOR IGUAL, PULA");
                         break;
                     }
                 case (int)BoolOperator.DIFERENTE:
                     {
-                        _out.WriteCommentedCode("LD " + REG2, _comment);
-                        _out.WriteCommentedCode("- " + REG1, "COD COMPLEMENTAR BOOLEANO");
-                        _out.WriteCommentedCode("JZ " + LABELFALSE, "SE FOR IGUAL, PULA");
+                        _out.WriteCode("LD " + REG2, _comment);
+                        _out.WriteCode("- " + REG1, "COD COMPLEMENTAR BOOLEANO");
+                        _out.WriteCode("JZ " + LABELFALSE, "SE FOR IGUAL, PULA");
                         break;
                     }
 
@@ -1092,70 +1068,70 @@ namespace CompilerModel.Semantic
                 {
                     case (int)Operator.PLUS:
                         {
-                            _out.WriteCommentedCode("+ " + _sym.TargetName, "AS_EA_ID");
+                            _out.WriteCode("+ " + _sym.TargetName, "AS_EA_ID");
                             break;
                         }
                     case (int)Operator.MINUS:
                         {
-                            _out.WriteCommentedCode("- " + _sym.TargetName, "AS_EA_ID");
+                            _out.WriteCode("- " + _sym.TargetName, "AS_EA_ID");
                             break;
                         }
                     case (int)Operator.TIMES:
                         {
-                            _out.WriteCommentedCode("* " + _sym.TargetName, "AS_EA_ID");
+                            _out.WriteCode("* " + _sym.TargetName, "AS_EA_ID");
                             break;
                         }
                     case (int)Operator.DIV:
                         {
-                            _out.WriteCommentedCode("/ " + _sym.TargetName, "AS_EA_ID");
+                            _out.WriteCode("/ " + _sym.TargetName, "AS_EA_ID");
                             break;
                         }
                     case (int)Tag.IF:
                         {
-                            _out.WriteCommentedCode("LD " + _sym.TargetName, "AS_EA_ID");
+                            _out.WriteCode("LD " + _sym.TargetName, "AS_EA_ID");
                             _reg1 = _sym; // guarda no registrador 
                             break;
                         }
                     case (int)Tag.WHILE:
                         {
-                            _out.WriteCommentedCode(_codeLoadValue, "AS_EA_ID");
+                            _out.WriteCode(_codeLoadValue, "AS_EA_ID");
                             _reg1 = _sym; // guarda no registrador 
                             break;
                         }
                     case (int)Tag.NEQUAL: // char '!=' 
                         {
-                            _out.WriteCommentedCode(_codeLoadValue, "AS_EA_ID");
+                            _out.WriteCode(_codeLoadValue, "AS_EA_ID");
                             break;
                         }
                     case (int)Tag.EQUAL: // ==
                         {
-                            _out.WriteCommentedCode(_codeLoadValue, "AS_EA_ID");
+                            _out.WriteCode(_codeLoadValue, "AS_EA_ID");
                             break;
                         }
                     case 62: // char '>' 
                         {
-                            _out.WriteCommentedCode(_codeLoadValue, "AS_EA_ID");
+                            _out.WriteCode(_codeLoadValue, "AS_EA_ID");
                             break;
                         }
                     case 60: // char '<'
                         {
-                            _out.WriteCommentedCode(_codeLoadValue, "AS_EA_ID");
+                            _out.WriteCode(_codeLoadValue, "AS_EA_ID");
                             break;
                         }
                     case 61: //char '='
                         {
-                            _out.WriteCommentedCode(_codeLoadValue, "AS_EA_ID");
+                            _out.WriteCode(_codeLoadValue, "AS_EA_ID");
                             break;
                         }
                     case (int)Tag.GEQUAL:
                         {
-                            _out.WriteCommentedCode(_codeLoadValue, "AS_EA_ID");
+                            _out.WriteCode(_codeLoadValue, "AS_EA_ID");
                             break;
                         }
 
                     case (int)Tag.LEQUAL:
                         {
-                            _out.WriteCommentedCode(_codeLoadValue, "AS_EA_NUM");
+                            _out.WriteCode(_codeLoadValue, "AS_EA_NUM");
                             break;
                         }
 
@@ -1173,84 +1149,84 @@ namespace CompilerModel.Semantic
                 {
                     case (int)Operator.PLUS:
                         {
-                            _out.WriteCommentedCode("MM " + REG2, "AS_EA_NUM"); // salva o que esta dentro
-                            _out.WriteCommentedCode(_codeLoadValue, "AS_EA_NUM");
-                            _out.WriteCommentedCode("MM " + REG3, "AS_EA_NUM"); // salva o que esta dentro
-                            _out.WriteCommentedCode("LD " + REG2, "AS_EA_NUM"); // salva o que esta dentro
-                            _out.WriteCommentedCode("+ " + REG3, "AS_EA_ID");
+                            _out.WriteCode("MM " + REG2, "AS_EA_NUM"); // salva o que esta dentro
+                            _out.WriteCode(_codeLoadValue, "AS_EA_NUM");
+                            _out.WriteCode("MM " + REG3, "AS_EA_NUM"); // salva o que esta dentro
+                            _out.WriteCode("LD " + REG2, "AS_EA_NUM"); // salva o que esta dentro
+                            _out.WriteCode("+ " + REG3, "AS_EA_ID");
                             break;
                         }
                     case (int)Operator.MINUS:
                         {
-                            _out.WriteCommentedCode("MM " + REG2, "AS_EA_NUM"); // salva o que esta dentro
-                            _out.WriteCommentedCode(_codeLoadValue, "AS_EA_NUM");
-                            _out.WriteCommentedCode("MM " + REG3, "AS_EA_NUM"); // salva o que esta dentro
-                            _out.WriteCommentedCode("LD " + REG2, "AS_EA_NUM"); // salva o que esta dentro
-                            _out.WriteCommentedCode("- " + REG3, "AS_EA_ID");
+                            _out.WriteCode("MM " + REG2, "AS_EA_NUM"); // salva o que esta dentro
+                            _out.WriteCode(_codeLoadValue, "AS_EA_NUM");
+                            _out.WriteCode("MM " + REG3, "AS_EA_NUM"); // salva o que esta dentro
+                            _out.WriteCode("LD " + REG2, "AS_EA_NUM"); // salva o que esta dentro
+                            _out.WriteCode("- " + REG3, "AS_EA_ID");
                             break;
                         }
                     case (int)Operator.TIMES:
                         {
-                            _out.WriteCommentedCode("MM " + REG2, "AS_EA_NUM"); // salva o que esta dentro
-                            _out.WriteCommentedCode(_codeLoadValue, "AS_EA_NUM");
-                            _out.WriteCommentedCode("* " + REG2, "AS_EA_ID");
+                            _out.WriteCode("MM " + REG2, "AS_EA_NUM"); // salva o que esta dentro
+                            _out.WriteCode(_codeLoadValue, "AS_EA_NUM");
+                            _out.WriteCode("* " + REG2, "AS_EA_ID");
                             break;
                         }
                     case (int)Operator.DIV:
                         {
-                            _out.WriteCommentedCode("MM " + REG2, "AS_EA_NUM"); // salva o que esta dentro
-                            _out.WriteCommentedCode(_codeLoadValue, "AS_EA_NUM");
-                            _out.WriteCommentedCode("MM " + REG3, "AS_EA_NUM"); // salva o que esta dentro
-                            _out.WriteCommentedCode("LD " + REG2, "AS_EA_NUM"); // salva o que esta dentro
-                            _out.WriteCommentedCode("/ " + REG3, "AS_EA_ID");
+                            _out.WriteCode("MM " + REG2, "AS_EA_NUM"); // salva o que esta dentro
+                            _out.WriteCode(_codeLoadValue, "AS_EA_NUM");
+                            _out.WriteCode("MM " + REG3, "AS_EA_NUM"); // salva o que esta dentro
+                            _out.WriteCode("LD " + REG2, "AS_EA_NUM"); // salva o que esta dentro
+                            _out.WriteCode("/ " + REG3, "AS_EA_ID");
                             break;
                         }
                     case (int)Tag.IF:
                         {
-                            _out.WriteCommentedCode(_codeLoadValue, "AS_EA_ID");
+                            _out.WriteCode(_codeLoadValue, "AS_EA_ID");
                             _reg1 = _sym; // guarda no registrador 
                             break;
                         }
                     case (int)Tag.WHILE:
                         {
-                            _out.WriteCommentedCode(_codeLoadValue, "AS_EA_ID");
+                            _out.WriteCode(_codeLoadValue, "AS_EA_ID");
                             _reg1 = _sym; // guarda no registrador 
                             break;
                         }
                     case (int)Tag.NEQUAL: // char '!=' 
                         {
-                            _out.WriteCommentedCode(_codeLoadValue, "AS_EA_NUM");
+                            _out.WriteCode(_codeLoadValue, "AS_EA_NUM");
                             break;
                         }
                     case (int)Tag.EQUAL: // ==
                         {
-                            _out.WriteCommentedCode(_codeLoadValue, "AS_EA_NUM");
+                            _out.WriteCode(_codeLoadValue, "AS_EA_NUM");
                             break;
                         }
                     case 62: // char '>' 
                         {
-                            _out.WriteCommentedCode(_codeLoadValue, "AS_EA_NUM");
+                            _out.WriteCode(_codeLoadValue, "AS_EA_NUM");
                             break;
                         }
                     case 60: // char '<'
                         {
-                            _out.WriteCommentedCode(_codeLoadValue, "AS_EA_NUM");
+                            _out.WriteCode(_codeLoadValue, "AS_EA_NUM");
                             break;
                         }
                     case 61: //char '='
                         {
-                            _out.WriteCommentedCode(_codeLoadValue, "AS_EA_NUM");
+                            _out.WriteCode(_codeLoadValue, "AS_EA_NUM");
                             break;
                         }
                     case (int)Tag.GEQUAL:
                         {
-                            _out.WriteCommentedCode(_codeLoadValue, "AS_EA_NUM");
+                            _out.WriteCode(_codeLoadValue, "AS_EA_NUM");
                             break;
                         }
 
                     case (int)Tag.LEQUAL:
                         {
-                            _out.WriteCommentedCode(_codeLoadValue, "AS_EA_NUM");
+                            _out.WriteCode(_codeLoadValue, "AS_EA_NUM");
                             break;
                         }
 

@@ -1,0 +1,16 @@
+name: funcao
+initial: 0
+final: 13
+(0, "function") -> 1
+(1, tipo) -> 2
+(2, "id") -> 3
+(3, "(") -> 4
+(4, declaracoes) -> 5
+(5, ")") -> 6
+(6, declaracoes) -> 7
+(7, "begin") -> 8
+(8, lista_de_comandos) -> 9
+(9, "return") -> 10
+(10, expressao) -> 11
+(11, "endfunction") -> 12
+(12, ";") -> 13

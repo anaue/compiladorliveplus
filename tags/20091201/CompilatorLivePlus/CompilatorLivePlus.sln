@@ -1,0 +1,43 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CompilatorLivePlus", "CompilatorLivePlus\CompilatorLivePlus.csproj", "{9FBA60E1-5E83-4F09-8E95-3342FF1A2BA2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APE", "APEParser\APE.csproj", "{43F86D01-DF12-4C91-839D-35D407E22FAA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CompilerModel", "CompilerModel\CompilerModel.csproj", "{61D525FE-0447-4373-81D2-E2C0B7D11D45}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+		TesteLexico|Any CPU = TesteLexico|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9FBA60E1-5E83-4F09-8E95-3342FF1A2BA2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9FBA60E1-5E83-4F09-8E95-3342FF1A2BA2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9FBA60E1-5E83-4F09-8E95-3342FF1A2BA2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9FBA60E1-5E83-4F09-8E95-3342FF1A2BA2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9FBA60E1-5E83-4F09-8E95-3342FF1A2BA2}.TesteLexico|Any CPU.ActiveCfg = TesteLexico|Any CPU
+		{9FBA60E1-5E83-4F09-8E95-3342FF1A2BA2}.TesteLexico|Any CPU.Build.0 = TesteLexico|Any CPU
+		{43F86D01-DF12-4C91-839D-35D407E22FAA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{43F86D01-DF12-4C91-839D-35D407E22FAA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{43F86D01-DF12-4C91-839D-35D407E22FAA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{43F86D01-DF12-4C91-839D-35D407E22FAA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{43F86D01-DF12-4C91-839D-35D407E22FAA}.TesteLexico|Any CPU.ActiveCfg = Release|Any CPU
+		{43F86D01-DF12-4C91-839D-35D407E22FAA}.TesteLexico|Any CPU.Build.0 = Release|Any CPU
+		{61D525FE-0447-4373-81D2-E2C0B7D11D45}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{61D525FE-0447-4373-81D2-E2C0B7D11D45}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{61D525FE-0447-4373-81D2-E2C0B7D11D45}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{61D525FE-0447-4373-81D2-E2C0B7D11D45}.Release|Any CPU.Build.0 = Release|Any CPU
+		{61D525FE-0447-4373-81D2-E2C0B7D11D45}.TesteLexico|Any CPU.ActiveCfg = Release|Any CPU
+		{61D525FE-0447-4373-81D2-E2C0B7D11D45}.TesteLexico|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(SubversionScc) = preSolution
+		Svn-Managed = True
+		Manager = AnkhSVN - Subversion Support for Visual Studio
+	EndGlobalSection
+EndGlobal

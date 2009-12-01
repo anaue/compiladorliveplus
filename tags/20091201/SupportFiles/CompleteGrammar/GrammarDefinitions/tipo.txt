@@ -1,0 +1,9 @@
+name: tipo
+initial: 0
+final: 1
+(0, "int") -> 1
+(0, "float") -> 1
+(0, "bool") -> 1
+(0, "string") -> 1
+(0, agregados_homogeneos) -> 1
+(0, agregados_heterogeneos) -> 1

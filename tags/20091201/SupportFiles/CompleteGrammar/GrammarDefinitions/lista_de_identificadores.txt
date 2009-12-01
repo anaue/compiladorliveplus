@@ -1,0 +1,5 @@
+name: lista_de_identificadores
+initial: 0
+final: 1
+(0, "id") -> 1
+(1, ",") -> 0

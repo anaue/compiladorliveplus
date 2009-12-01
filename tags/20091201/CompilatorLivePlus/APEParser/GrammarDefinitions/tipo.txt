@@ -1,0 +1,20 @@
+name: tipo
+initial: 0
+final: 1, 2
+(0, "int") -> 1 & AS_TIPO_NUM
+(0, "float") -> 1 & AS_TIPO_NUM
+(0, "bool") -> 1 & AS_TIPO_NUM
+(0, "string") -> 2 & AS_TIPO_STRING
+(0, "struct") -> 3 & AS_TIPO_STRUCT
+(1, "[") -> 4 & AS_TIPO_ARRAY
+(3, "ID") -> 5 & AS_TIPO_7
+(4, "NUM") -> 6 & AS_TIPO_ARRAYSIZE
+(5, "begin") -> 7 & AS_TIPO_9
+(6, ",") -> 4 & AS_TIPO_ARRAYSEPARATOR
+(6, "]") -> 2 & AS_TIPO_ENDARRAY
+(7, "ID") -> 8 & AS_TIPO_12
+(7, "endstruct") -> 2 & AS_TIPO_13
+(8, tipo) -> 9 & AS_TIPO_14
+(9, ",") -> 10 & AS_TIPO_15
+(9, "endstruct") -> 2 & AS_TIPO_16
+(10, "ID") -> 8 & AS_TIPO_17

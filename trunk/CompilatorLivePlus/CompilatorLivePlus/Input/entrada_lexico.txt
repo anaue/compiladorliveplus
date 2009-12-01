@@ -1,3 +1,9 @@
+sub fat() 
+	fatorial_num int
+begin
+	fatorial_num = 5;
+endsub;
+
 program
     fatorial_num int,
     fatorial_res int
@@ -5,8 +11,8 @@ begin
     fatorial_num = 5;
     fatorial_res = fatorial_num;
     while fatorial_num > 1 loop
+        fatorial_res =  fatorial_res * (fatorial_num - 1);
         fatorial_num = fatorial_num - 1 ;
-        fatorial_res = fatorial_num * fatorial_res ;
     endloop;
     //output fatorial_res ;
 end ; 

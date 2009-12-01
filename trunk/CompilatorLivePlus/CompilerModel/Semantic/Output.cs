@@ -9,34 +9,62 @@ namespace CompilerModel.Semantic
     public class Output
     {
         private StreamWriter _writer;
-        private StringBuilder _output;
+        private StringBuilder _codeArea;
         private String _pathName;
-        private string _label = "\t";
+        private string _label;
         private StringBuilder _reservedArea;
-        public int LineCode;
+        private StringBuilder _memoryArea;
+        public bool _reserved;
+        public int CodeLines;
+        public int MemoryLines;
+        public int ReservedLines;
 
 
         public Output(string path)
         {
-            LineCode = 0;
+            CodeLines = 0;
+            ReservedLines = 0;
+            MemoryLines = 0;
+            _reserved = false;
+            _label = "\t";
+
             _pathName = path;
-            _output = new StringBuilder();
+            _codeArea = new StringBuilder();
             _reservedArea = new StringBuilder();
+            _memoryArea = new StringBuilder();
+            WriteVarArea("JP INICIO");
         }
 
         public void WriteCode(string codeLine)
         {
-            _output.AppendLine(_label + "\t" + codeLine);
+            if (_reserved)
+            {
+                _codeArea.AppendLine(_label + "\t" + codeLine);
+                CodeLines++;
+            }
+            else
+            {
+                _reservedArea.AppendLine(_label + "\t" + codeLine);
+                ReservedLines++;
+            }
             _label = "\t";
-            LineCode++;
         }
 
 
-        public void WriteCommentedCode(string codeLine, string comment)
+        public void WriteCode(string codeLine, string comment)
         {
-            _output.AppendLine(_label+ "\t" + codeLine + " ;\t" + comment);
+            if (_reserved)
+            {
+                _codeArea.AppendLine(_label + "\t" + codeLine + " ;\t" + comment);
+                CodeLines++;
+            }
+            else
+            {
+                _reservedArea.AppendLine(_label + "\t" + codeLine);
+                ReservedLines++;
+            }
             _label = "\t";
-            LineCode++;
+
         }
 
         public void SetLabelCode(string label)
@@ -50,37 +78,24 @@ namespace CompilerModel.Semantic
             if (!Directory.Exists(directoryName))
                 Directory.CreateDirectory(directoryName);
             _writer = new StreamWriter(_pathName, false, Encoding.Default);
-            _writer.Write(_output.ToString() + _reservedArea.ToString());
+            _writer.Write(_memoryArea.ToString() + _codeArea.ToString() + _reservedArea.ToString());
             _writer.Close();
         }
 
         public override string ToString()
         {
-            _output.AppendLine(_reservedArea.ToString());
-            return _output.ToString();
+            return _memoryArea.ToString() +"\n" + _codeArea.ToString() + "\n" + _reservedArea.ToString();
         }
 
-        public void WriteReservedArea(string codeLine)
+        public void WriteVarArea(string codeline)
         {
-            _reservedArea.AppendLine("\t\t"+ codeLine);
+            _memoryArea.AppendLine("\t\t" + codeline);
+            MemoryLines++;
         }
 
         internal string GenerateVarName(string _name)
         {
-
-            _name = _name.ToUpper().Replace("_","");
-            _name = _name.Replace("1", "");
-            _name = _name.Replace("2", "");
-            _name = _name.Replace("3", "");
-            _name = _name.Replace("4", "");
-            _name = _name.Replace("5", "");
-            _name = _name.Replace("6", "");
-            _name = _name.Replace("7", "");
-            _name = _name.Replace("8", "");
-            _name = _name.Replace("9", "");
-            _name = _name.Replace("0", "");
-
-            return _name;
+            return _name.ToUpper();
         }
     }
 }

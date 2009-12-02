@@ -14,6 +14,7 @@ namespace CompilerModel.Semantic
         private string _label;
         private StringBuilder _reservedArea;
         private StringBuilder _memoryArea;
+        private static List<string> _alreadyDeclared;
         public bool _reserved;
         public int CodeLines;
         public int MemoryLines;
@@ -33,6 +34,7 @@ namespace CompilerModel.Semantic
             _reservedArea = new StringBuilder();
             _memoryArea = new StringBuilder();
             WriteVarArea("JP INICIO");
+            _alreadyDeclared = new List<string>();
         }
 
         public void WriteCode(string codeLine)
@@ -87,9 +89,19 @@ namespace CompilerModel.Semantic
             return _memoryArea.ToString() +"\n" + _codeArea.ToString() + "\n" + _reservedArea.ToString();
         }
 
-        public void WriteVarArea(string codeline)
+        public void WriteVarArea(string varName, string initial_value)
         {
-            _memoryArea.AppendLine("\t\t" + codeline);
+            if (!_alreadyDeclared.Exists(In => In.Equals(varName)))
+            {
+                _alreadyDeclared.Add(varName);
+                _memoryArea.AppendLine("\t\t" + varName + " K " + initial_value);
+                MemoryLines++;
+            }
+        }
+
+        public void WriteVarArea(string code)
+        {
+            _memoryArea.AppendLine("\t\t" + code);
             MemoryLines++;
         }
 

@@ -323,7 +323,7 @@ namespace CompilerModel.Semantic
 
         public void AS_CODIGO_SUB(Env _environment, Token _tok)
         {
-            _out._reserved = true;
+            _out.Reserved = true;
         }
 
         public void AS_CODIGO_4(Env _environment, Token _tok)
@@ -576,7 +576,7 @@ namespace CompilerModel.Semantic
         public void AS_CODIGO_ENDSUB(Env _environment, Token _tok)
         {
             _out.WriteCode("RS "+_rtCall);
-            _out._reserved = false;
+            _out.Reserved = false;
         }
 
         public void AS_CODIGO_50(Env _environment, Token _tok)

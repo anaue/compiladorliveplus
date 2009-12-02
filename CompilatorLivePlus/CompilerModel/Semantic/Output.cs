@@ -15,7 +15,7 @@ namespace CompilerModel.Semantic
         private StringBuilder _reservedArea;
         private StringBuilder _memoryArea;
         private static List<string> _alreadyDeclared;
-        public bool _reserved;
+        public bool Reserved;
         public int CodeLines;
         public int MemoryLines;
         public int ReservedLines;
@@ -26,7 +26,7 @@ namespace CompilerModel.Semantic
             CodeLines = 0;
             ReservedLines = 0;
             MemoryLines = 0;
-            _reserved = false;
+            Reserved = false;
             _label = "\t";
 
             _pathName = path;
@@ -39,7 +39,7 @@ namespace CompilerModel.Semantic
 
         public void WriteCode(string codeLine)
         {
-            if (_reserved)
+            if (!Reserved)
             {
                 _codeArea.AppendLine(_label + "\t" + codeLine);
                 CodeLines++;
@@ -55,7 +55,7 @@ namespace CompilerModel.Semantic
 
         public void WriteCode(string codeLine, string comment)
         {
-            if (_reserved)
+            if (!Reserved)
             {
                 _codeArea.AppendLine(_label + "\t" + codeLine + " ;\t" + comment);
                 CodeLines++;

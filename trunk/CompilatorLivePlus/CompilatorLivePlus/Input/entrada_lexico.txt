@@ -9,10 +9,7 @@ program
     fatorial_res int
 begin
     fatorial_num = 5;
-    fatorial_res = fatorial_num;
-    while fatorial_num > 1 loop
-        fatorial_res =  fatorial_res * (fatorial_num - 1);
-        fatorial_num = fatorial_num - 1 ;
-    endloop;
-    //output fatorial_res ;
+    fatorial_num = fatorial_num + 2;
+    call fat();
+    fatorial_res = 1;    
 end ; 

@@ -80,7 +80,7 @@ namespace CompilerModel.Semantic
             if (!Directory.Exists(directoryName))
                 Directory.CreateDirectory(directoryName);
             _writer = new StreamWriter(_pathName, false, Encoding.Default);
-            _writer.Write(_memoryArea.ToString() + "@ /" + (2 * (MemoryLines+1)).ToString("X") + "\n" + _codeArea.ToString() + _reservedArea.ToString());
+            _writer.Write(_memoryArea.ToString() + "\t\t@ /" + (2 * (MemoryLines+1)).ToString("X") + _writer.NewLine + _codeArea.ToString() + _reservedArea.ToString());
             _writer.Close();
         }
 

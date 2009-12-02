@@ -10,6 +10,11 @@ namespace CompilerModel.Structures
         private Node first = null;
         private int count = 0;
 
+        public object First
+        {
+            get { return first != null ? first.Value: null; }
+        }
+
         public bool Empty
         {
             get

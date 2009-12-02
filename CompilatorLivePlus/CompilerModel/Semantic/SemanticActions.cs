@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using CompilerModel.Symbols;
 using CompilerModel.Lexer;
+using CompilerModel.Structures;
 
 namespace CompilerModel.Semantic
 {
@@ -41,10 +42,14 @@ namespace CompilerModel.Semantic
         private Symbol _acc; // tipo do valor no acumulador
         private string _rtCall;
         private int _sizeVAR;
-        
+
+        private Stack operator_stack;
+        private Stack operand_stack;
+
         private int _typeCMD;
         private int _typeBoolOper;
         private int _typeTYPE;
+        private int _countOperacoes;
         
         //
         private const string REG1 = "REGA";
@@ -64,6 +69,8 @@ namespace CompilerModel.Semantic
         public SemanticActions(string outputFile)
         {
             _out = new Output(outputFile);
+            operand_stack = new Stack();
+            operator_stack = new Stack();
         }
 
         public void SaveOutput()
@@ -178,12 +185,13 @@ namespace CompilerModel.Semantic
             {
                 case (int)CommandType.ATRIB:
                     {
-                        if (_reg1.Type == _acc.Type) // verifica o tipo do accumulador com a variavel a ser atribuida
-                        {
-                            //_buffer.Initialized = true;
-                            //_buffer.Used = true;
-                            _out.WriteCode("MM " + _reg1.TargetName, "AS_COMANDO_EXIT");
-                        }
+                        while (!operator_stack.Empty)
+                            RealizaOperacaoNaPilha();
+                        object result = operand_stack.Pop();
+                        string str_ResultName = result.GetType() == typeof(String) ? Convert.ToString(result) : ((Symbol)result).TargetName;
+                        //TO DO: Verificar Tipo antes de atribuir
+                        _out.WriteCode("LD " + str_ResultName, "AS_COMANDO_EXIT");
+                        _out.WriteCode("MM " + _reg1.TargetName, "AS_COMANDO_EXIT");
                         break;
                     }
                 case (int)CommandType.COND:
@@ -377,7 +385,6 @@ namespace CompilerModel.Semantic
             }
             _reg1 = null;
 
-            _out.WriteCode("@ /" + (2 *_out.MemoryLines).ToString("X"), "area de programa");
             _out.SetLabelCode("INICIO");
         }
 
@@ -634,17 +641,18 @@ namespace CompilerModel.Semantic
         public void AS_EA_ID(Env _environment, Token _tok)
         {
             Symbol _sym = _environment.GetSymbol(_tok);
+            operand_stack.Push(_sym);
 
-            if (_sym == null)
-                throw new Exception("SEMANTIC: var not declared");
+            //if (_sym == null)
+            //    throw new Exception("SEMANTIC: var not declared");
 
-           // _sym.TargetName = _out.GenerateVarName(_sym.Name);
-            
-
-            RealizaOperacaoBoolAritm(_acc, _sym);
+            //_sym.TargetName = _out.GenerateVarName(_sym.Name);
 
 
-            _acc = _sym;
+            //RealizaOperacaoBoolAritm(_acc, _sym);
+
+
+            //_acc = _sym;
 
         }
         /// <summary>
@@ -655,18 +663,10 @@ namespace CompilerModel.Semantic
         /// <param name="_tok"></param>
         public void AS_EA_NUM(Env _environment, Token _tok)
         {
-            Symbol _sym = new Symbol();
-            _sym.TargetName= ((Num)_tok).Value.ToString();
-            _sym.Token = _tok;
-            _sym.Type = TYPE_MVN_INT;
-
-            if (_sym == null)
-                throw new Exception("SEMANTIC: var not declared");
-
-            RealizaOperacaoBoolAritmNumerico(_acc, _sym);
-
-            _acc = _sym;
-
+            Symbol _sym = new Symbol(_tok);
+            _out.WriteVarArea("N" + Convert.ToString(Convert.ToInt32(_sym.OperationalValue)), "=" + Convert.ToInt32(_sym.OperationalValue));
+            _sym.TargetName = "N" + Convert.ToString(Convert.ToInt32(_sym.OperationalValue));
+            operand_stack.Push(_sym);
         }
 
         public void AS_EA_3(Env _environment, Token _tok)
@@ -681,31 +681,41 @@ namespace CompilerModel.Semantic
 
         public void AS_EA_EXPONENCIAL(Env _environment, Token _tok)
         {
-            //_out.WriteCommentedCode("LD " + _accumulator.TargetName, "AS_EA_EXPONENCIAL");
-            _acc.Token = _tok;
+            operator_stack.Push(new Symbol(_tok));
         }
 
         public void AS_EA_MULTI(Env _environment, Token _tok)
         {
-            //_out.WriteCommentedCode("LD " + _accumulator.TargetName, "AS_EA_MULTI");
-            _acc.Token = _tok;
+            operator_stack.Push(new Symbol(_tok));
+            //TO DO: Implement Exponencial resolution
         }
 
         public void AS_EA_DIVISAO(Env _environment, Token _tok)
         {
-           // _out.WriteCommentedCode("LD " + _accumulator.TargetName, "AS_EA_DIVISAO");
-            _acc.Token = _tok;
+            operator_stack.Push(new Symbol(_tok));
+            //TO DO: Implement Exponencial resolution
         }
 
         public void AS_EA_SUBTRACAO(Env _environment, Token _tok)
         {
-            //_out.WriteCommentedCode("LD " + _accumulator.TargetName, "AS_EA_SUBTRACAO");
-            _acc.Token = _tok;
+            Symbol sym = new Symbol(_tok);
+            if (operator_stack.First != null)
+                if (((Symbol)operator_stack.First).Token.Equals(new Token("*")) || ((Symbol)operator_stack.First).Token.Equals(new Token("/")))
+                {
+                    RealizaOperacaoNaPilha();
+                }
+            operator_stack.Push(sym);
         }
 
         public void AS_EA_SOMA(Env _environment, Token _tok)
         {
-            _acc.Token = _tok;
+            Symbol sym = new Symbol(_tok);
+            if (operator_stack.First != null)
+                if (((Symbol)operator_stack.First).Token.Equals(new Token("*")) || ((Symbol)operator_stack.First).Token.Equals(new Token("/")))
+                {
+                    RealizaOperacaoNaPilha();
+                }
+            operator_stack.Push(sym);
         }
 
         public void AS_EA_15(Env _environment, Token _tok)
@@ -1233,6 +1243,35 @@ namespace CompilerModel.Semantic
 
                 }
             }
+        }
+
+        private void RealizaOperacaoNaPilha()
+        {
+            string op2 = PopVarName();
+            string op1 = PopVarName();
+            _out.WriteCode("LD " + op1, "Load Value");
+            _out.WriteCode(Char.ConvertFromUtf32(((Symbol)operator_stack.Pop()).Token.tag) + " " + op2, "AS_EA_ID");
+            _out.WriteVarArea("AUX" + _countOperacoes, "/0");
+            _out.WriteCode("MM AUX" + _countOperacoes, "AS_EA_NUM");
+            operand_stack.Push("AUX" + _countOperacoes);
+            _countOperacoes++;
+        }
+
+        private string PopVarName()
+        {
+            string op;
+            object oop = operand_stack.Pop();
+            if (oop.GetType() == typeof(String))
+                op = Convert.ToString(oop);
+            else
+                op = Convert.ToString(((Symbol)oop).TargetName);
+            return op;
+        }
+        private void RealizaOperacaoNaPilhaId(Symbol symbol)
+        {
+            //string _codeLoadValue = "LD " + operand_stack.Pop();
+            //_out.WriteCommentedCode(_codeLoadValue, "Load Value");
+            //_out.WriteCommentedCode(Char.ConvertFromUtf32(((Token)operator_stack.Pop()).tag) + " " + operand_stack.Pop(), "AS_EA_ID");
         }
 
     }

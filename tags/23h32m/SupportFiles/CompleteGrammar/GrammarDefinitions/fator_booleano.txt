@@ -1,0 +1,5 @@
+name: fator_booleano
+initial: 0
+final: 1
+(0, membro_booleano) -> 1
+(1, operador_booleano) -> 0

@@ -1,0 +1,10 @@
+name: comando
+initial: 0
+final: 2
+(0, comando_atribuicao) -> 1
+(0, comando_condicional) -> 1
+(0, comando_iterativo) -> 1
+(0, comando_entrada) -> 1
+(0, comando_saida) -> 1
+(0, comando_subrotina) -> 1
+(1, ";") -> 2

@@ -1,0 +1,6 @@
+name: entidade
+initial: 0
+final: 1
+(0, funcao) -> 0
+(0, subrotina) -> 0
+(0, programa) -> 1

@@ -1,0 +1,6 @@
+name: expressao
+initial: 0
+final: 1
+(0, expressao_aritmetica) -> 1
+(0, expressao_booleana) -> 1
+(0, expressao_ascii) -> 1

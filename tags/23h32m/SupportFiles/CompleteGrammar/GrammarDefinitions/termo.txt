@@ -1,0 +1,5 @@
+name: termo
+initial: 0
+final: 1
+(0, fator) -> 1
+(1, operador_multi) -> 0

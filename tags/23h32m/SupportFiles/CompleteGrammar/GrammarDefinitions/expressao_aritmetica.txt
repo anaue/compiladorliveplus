@@ -1,0 +1,5 @@
+name: expressao_aritmetica
+initial: 0
+final: 1
+(0, termo) -> 1
+(1, operador_soma) -> 0

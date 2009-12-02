@@ -1,0 +1,15 @@
+sub fat() 
+	fatorial_num int
+begin
+	fatorial_num = 5;
+endsub;
+
+program
+    fatorial_num int,
+    fatorial_res int
+begin
+    fatorial_num = 5;
+    fatorial_num = fatorial_num + 2;
+    call fat();
+    fatorial_res = 1;    
+end ; 

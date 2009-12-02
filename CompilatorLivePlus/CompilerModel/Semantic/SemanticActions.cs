@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using CompilerModel.Symbols;
 using CompilerModel.Lexer;
-using CompilerModel.Structures;
 
 namespace CompilerModel.Semantic
 {
@@ -28,7 +27,7 @@ namespace CompilerModel.Semantic
     }
     public enum VariableType
     {
-        INT =0,
+        INT = 0,
         FLOAT,
         BOOL,
         STRING,
@@ -42,20 +41,21 @@ namespace CompilerModel.Semantic
         private Symbol _acc; // tipo do valor no acumulador
         private string _rtCall;
         private int _sizeVAR;
+        private int whileCount = 0;
+        private int ifCount = 0;
 
-        private Stack operator_stack;
-        private Stack operand_stack;
+        private CommandType _typeCMD;
+        private BoolOperator _typeBoolOper;
+        private VariableType _typeTYPE;
 
-        private int _typeCMD;
-        private int _typeBoolOper;
-        private int _typeTYPE;
-        private int _countOperacoes;
-        
         //
         private const string REG1 = "REGA";
         private const string REG2 = "REGB";
         private const string REG3 = "REGC";
-        private const string LABELFALSE = "FALSE";
+        private const string LABELBEGINIF = "IF";
+        private const string LABELENDIF = "ENDIF";
+        private const string LABELWHILE = "WHILE";
+        private const string LABELENDLOOP = "ENDLOOP";
         private const string TYPE_MVN_INT = "int";
         private const string TYPE_MVN_FLOAT = "float";
         private const string TYPE_MVN_BOOL = "bool";
@@ -69,8 +69,6 @@ namespace CompilerModel.Semantic
         public SemanticActions(string outputFile)
         {
             _out = new Output(outputFile);
-            operand_stack = new Stack();
-            operator_stack = new Stack();
         }
 
         public void SaveOutput()
@@ -85,7 +83,7 @@ namespace CompilerModel.Semantic
         public void AS_COMANDO_ATRIB_1(Env _environment, Token _tok)
         {
             _typeCMD = (int)CommandType.ATRIB;
-            _reg1 = _environment.GetSymbol( _tok );
+            _reg1 = _environment.GetSymbol(_tok);
 
             if (_reg1 == null)
                 throw new Exception("SEMANTIC: variable not declared");
@@ -94,38 +92,38 @@ namespace CompilerModel.Semantic
 
         public void AS_COMANDO_IF(Env _environment, Token _tok)
         {
-            _typeCMD = (int)CommandType.COND;
-            _acc = new Symbol();
-            _acc.Token = _tok;
+            _typeCMD = CommandType.COND;
+            _out.SetLabelCode(getLabelBeginIf());
+            _acc = new Symbol(_tok);
+            //_acc.Token = _tok;
         }
 
         public void AS_COMANDO_WHILE(Env _environment, Token _tok)
         {
-            _typeCMD = (int)CommandType.ITERATIVE;
-            _out.SetLabelCode("WHILE");
-            _acc = new Symbol();
-            _acc.Token = _tok;
+            _typeCMD = CommandType.ITERATIVE;
+            _out.SetLabelCode(getLabelBeginWhile());
+            _acc = new Symbol(_tok);
         }
 
         public void AS_COMANDO_INPUT_1(Env _environment, Token _tok)
         {
-            _typeCMD = (int)CommandType.INPUT;
+            _typeCMD = CommandType.INPUT;
             _acc = new Symbol();
             _acc.Token = _tok;
         }
 
-        public void AS_COMANDO_OUTPUT (Env _environment, Token _tok)
+        public void AS_COMANDO_OUTPUT(Env _environment, Token _tok)
         {
-            _typeCMD = (int)CommandType.OUTPUT;
+            _typeCMD = CommandType.OUTPUT;
             _acc = new Symbol();
             _acc.Token = _tok;
         }
 
         public void AS_COMANDO_CALL(Env _environment, Token _tok)
         {
-            _typeCMD = (int)CommandType.SUBROTINE;
-            _acc = new Symbol();
-            _acc.Token = _tok;
+            _typeCMD = CommandType.SUBROTINE;
+            _acc = new Symbol(_tok);
+            //_acc.Token = _tok;
         }
 
         public void AS_COMANDO_ATRIB_2(Env _environment, Token _tok)
@@ -133,25 +131,23 @@ namespace CompilerModel.Semantic
             // recebe o sinal de atribuição '='
             _acc = new Symbol();
             _acc.Token = _tok;
-            
+
         }
 
         public void AS_COMANDO_CALL_EB(Env _environment, Token _tok)
         {
-            
+
         }
 
         public void AS_COMANDO_INPUT_2(Env _environment, Token _tok)
         {
-            
             if (_reg1 != null)
             {
-
-                if ( _tok.tag == (int)Tag.ID) // valores possiveis de entrada?
+                if (_tok.tag == (int)Tag.ID) // valores possiveis de entrada?
                 {
-                    Symbol _sym = new Symbol();
-                    _sym.Id = _tok.ToString();
-                    _sym.Name = ((Word)_tok).Lexeme;
+                    Symbol _sym = new Symbol(_tok);
+                    //_sym.Id = _tok.ToString();
+                    //_sym.Name = ((Word)_tok).Lexeme;
                     _sym.Initialized = true;
                     _sym.Used = true;
                     //_sym.OperationalValue = ;
@@ -169,14 +165,18 @@ namespace CompilerModel.Semantic
             //_environment.AddSymbol(_acc);
         }
 
-        public void AS_COMANDO_12(Env _environment, Token _tok)
+        public void AS_COMANDO_CALL_ID(Env _environment, Token _tok)
         {
-            
+            Symbol _sym;
+            _sym = _environment.GetSymbol(_tok);
+            if (_sym == null)
+                throw new Exception("SEMANTIC: var not declared");
+            _rtCall = (string)_sym.OperationalValue;
         }
 
-        public void AS_COMANDO_13(Env _environment, Token _tok)
+        public void AS_COMANDO_CALL_OPENBRAC(Env _environment, Token _tok)
         {
-            
+
         }
 
         public void AS_COMANDO_EXIT(Env _environment, Token _tok)
@@ -185,36 +185,38 @@ namespace CompilerModel.Semantic
             {
                 case (int)CommandType.ATRIB:
                     {
-                        while (!operator_stack.Empty)
-                            RealizaOperacaoNaPilha();
-                        object result = operand_stack.Pop();
-                        string str_ResultName = result.GetType() == typeof(String) ? Convert.ToString(result) : ((Symbol)result).TargetName;
-                        //TO DO: Verificar Tipo antes de atribuir
-                        _out.WriteCode("LD " + str_ResultName, "AS_COMANDO_EXIT");
-                        _out.WriteCode("MM " + _reg1.TargetName, "AS_COMANDO_EXIT");
+                        if (_reg1.Type == _acc.Type) // verifica o tipo do accumulador com a variavel a ser atribuida
+                        {
+                            //_buffer.Initialized = true;
+                            //_buffer.Used = true;
+                            _out.WriteCode("MM " + _reg1.TargetName, "AS_COMANDO_EXIT");
+                        }
                         break;
                     }
-                case (int)CommandType.COND:
+                case CommandType.COND:
+                    {
+                        _out.WriteCode("NP", "AS_COMANDO_EXIT");
+                        break;
+                    }
+
+                case CommandType.ITERATIVE:
                     {
                         break;
                     }
-                case (int)CommandType.ITERATIVE:
+                case CommandType.INPUT:
                     {
                         break;
                     }
-                case (int)CommandType.INPUT:
+                case CommandType.OUTPUT:
                     {
                         break;
                     }
-                case (int)CommandType.OUTPUT:
+                case CommandType.SUBROTINE:
                     {
+                        //_out.WriteCode("SC ", "AS_COMANDO_EXIT");
                         break;
                     }
-                case (int)CommandType.SUBROTINE:
-                    {
-                        break;
-                    }
-         
+
 
             }
             _acc = new Symbol();
@@ -223,17 +225,25 @@ namespace CompilerModel.Semantic
 
         public void AS_COMANDO_15(Env _environment, Token _tok)
         {
-            
+
+        }
+
+        public void AS_COMANDO_CALL_CLOSEBRAC(Env _environment, Token _tok)
+        {
+            _typeCMD = CommandType.SUBROTINE;
+            _out.Reserved = false;
+            _out.WriteCode("SC " + _out.GenerateVarName(_rtCall));
+
         }
 
         public void AS_COMANDO_16(Env _environment, Token _tok)
         {
-            
+
         }
 
         public void AS_COMANDO_17(Env _environment, Token _tok)
         {
-            
+
         }
 
         public void AS_COMANDO_THEN(Env _environment, Token _tok)
@@ -242,42 +252,39 @@ namespace CompilerModel.Semantic
 
             resultado_booleano("AS_COMANDO_THEN");
 
-            //_out.WriteCommentedCode("LD =" + _varReg2, "AS_COMANDO_THEN");
-            //_out.WriteCommentedCode("- " + _varReg1, "COD COMPLEMENTAR BOOLEANO");
-            //_out.WriteCommentedCode("JN " + _labelFalse, "SE FOR MENOR, PULA"); 
-
-            _acc = new Symbol();
-            _acc.Token = _tok;
+            _acc = new Symbol(_tok);
+            //_acc.Token = _tok;
         }
 
         public void AS_COMANDO_19(Env _environment, Token _tok)
         {
-            
+
         }
 
         public void AS_COMANDO_20(Env _environment, Token _tok)
         {
-            
+
         }
 
         public void AS_COMANDO_ELSE(Env _environment, Token _tok)
         {
-            _out.SetLabelCode(LABELFALSE);
+            _out.SetLabelCode(getLabelEndif());
         }
 
         public void AS_COMANDO_23(Env _environment, Token _tok)
         {
-            
+
         }
 
         public void AS_COMANDO_24(Env _environment, Token _tok)
         {
-            
+
         }
 
         public void AS_COMANDO_ENDIF(Env _environment, Token _tok)
         {
-            _out.SetLabelCode(LABELFALSE);
+            _typeCMD = CommandType.COND;
+            _out.SetLabelCode(getLabelEndif());
         }
 
         public void AS_COMANDO_LOOP(Env _environment, Token _tok)
@@ -290,18 +297,20 @@ namespace CompilerModel.Semantic
 
         public void AS_COMANDO_27(Env _environment, Token _tok)
         {
-            
+
         }
 
         public void AS_COMANDO_28(Env _environment, Token _tok)
         {
-            
+
         }
 
         public void AS_COMANDO_ENDLOOP(Env _environment, Token _tok)
         {
-            _out.WriteCode("JP WHILE"," RETORNA PARA O LOOP");
-            _out.SetLabelCode(LABELFALSE);
+            _typeCMD = CommandType.ITERATIVE;
+            _out.WriteCode("JP WHILE" + whileCount, " RETORNA PARA O LOOP");
+
+            _out.SetLabelCode(getLabelEndWhile());
         }
 
         #endregion COMANDO Automata
@@ -311,8 +320,8 @@ namespace CompilerModel.Semantic
         public void AS_CODIGO_START(Env _environment, Token _tok)
         {
             //_out.WriteCode("INPUT K /0");
-            _out.WriteVarArea(REG1+" K /0"); // CRIA UMA VARIAVEL AUXILIAR PARA CONTAS
-            _out.WriteVarArea(REG2+" K /0"); // CRIA UMA VARIAVEL AUXILIAR PARA CONTAS
+            _out.WriteVarArea(REG1 + " K /0"); // CRIA UMA VARIAVEL AUXILIAR PARA CONTAS
+            _out.WriteVarArea(REG2 + " K /0"); // CRIA UMA VARIAVEL AUXILIAR PARA CONTAS
             _out.WriteVarArea(REG3 + " K /0"); // CRIA UMA VARIAVEL AUXILIAR PARA CONTAS
         }
 
@@ -343,10 +352,12 @@ namespace CompilerModel.Semantic
 
         public void AS_CODIGO_SUB_ID(Env _environment, Token _tok)
         {
-           
-            _rtCall = ((Word)_tok).Lexeme;
-            _out.SetLabelCode(_rtCall);
-            _out.WriteCode("JP /000","AS_CODIGO_SUB_ID");
+            _reg1 = new Symbol(_tok);
+            _reg1.TargetName = _out.GenerateVarName(_reg1.TargetName);
+            _rtCall = (string)_reg1.OperationalValue;
+
+            _out.SetLabelCode(_out.GenerateVarName(_rtCall));
+            _out.WriteCode("JP /000", "AS_CODIGO_SUB_ID");
 
         }
 
@@ -373,18 +384,14 @@ namespace CompilerModel.Semantic
         {
             if (_reg1 != null)
             {
-                _reg1.Id = ((Word)_reg1.Token).Lexeme;
-
                 if (_acc != null)
                 {
-                    _reg1.Type = ((Word)_acc.Token).Lexeme; // atribuicao do tipo recebido
-                    _reg1.TargetName += _out.MemoryLines;
-                    _environment.AddSymbol(_reg1);
-                    _out.WriteVarArea(_reg1.TargetName  + " K /0");
+                    declareVariable(_environment, _reg1, ((Word)_acc.Token).Lexeme);
                 }
             }
             _reg1 = null;
 
+            _out.WriteCode("@ /" + (2 * _out.MemoryLines + 1).ToString("X"), "area de programa");
             _out.SetLabelCode("INICIO");
         }
 
@@ -443,14 +450,9 @@ namespace CompilerModel.Semantic
         {
             if (_reg1 != null)
             {
-                _reg1.Id = ((Word)_reg1.Token).Lexeme;
-
                 if (_acc != null)
                 {
-                    _reg1.Type = ((Word)_acc.Token).Lexeme; // atribuicao do tipo recebido
-                    _reg1.TargetName += _out.MemoryLines;
-                    _environment.AddSymbol(_reg1);
-                    _out.WriteVarArea(_reg1.TargetName +" K /0");
+                    declareVariable(_environment, _reg1, ((Word)_acc.Token).Lexeme);
                 }
             }
             _reg1 = null;
@@ -483,7 +485,7 @@ namespace CompilerModel.Semantic
 
         public void AS_CODIGO_30(Env _environment, Token _tok)
         {
-            
+
         }
 
         public void AS_CODIGO_31(Env _environment, Token _tok)
@@ -526,32 +528,40 @@ namespace CompilerModel.Semantic
 
         }
 
-        public void AS_CODIGO_39(Env _environment, Token _tok)
+        public void AS_CODIGO_SUB_EXIT(Env _environment, Token _tok)
         {
+            Symbol sym = new Symbol(new Word((int)Tag.ID, _rtCall, 0));
 
+            _environment.AddSymbol(sym);
         }
 
         public void AS_CODIGO_40(Env _environment, Token _tok)
         {
 
         }
+        public void AS_CODIGO_SUB_ID_VAR(Env _environment, Token _tok)
+        {
+
+            _reg1 = new Symbol(_tok);
+            _reg1.TargetName = _out.GenerateVarName(_reg1.TargetName);
+            //_reg1.Token = _tok;
+            //_reg1.Id = ((Word)_tok).Lexeme;
+
+            //_out.WriteCode("JP /000", "AS_CODIGO_SUB_ID");
+
+        }
+
 
         public void AS_CODIGO_SUB_BEGIN(Env _environment, Token _tok)
         {
             if (_reg1 != null)
             {
-                _reg1.Id = ((Word)_reg1.Token).Lexeme;
-
                 if (_acc != null)
                 {
-                    _reg1.Type = ((Word)_acc.Token).Lexeme; // atribuicao do tipo recebido
-                    _reg1.TargetName += _out.MemoryLines;
-                    _environment.AddSymbol(_reg1);
-                    _out.WriteVarArea(_reg1.TargetName + " K /0");
+                    declareVariable(_environment, _reg1, ((Word)_acc.Token).Lexeme);
                 }
             }
             _reg1 = null;
-
         }
 
         public void AS_CODIGO_43(Env _environment, Token _tok)
@@ -575,7 +585,7 @@ namespace CompilerModel.Semantic
 
         public void AS_CODIGO_ENDSUB(Env _environment, Token _tok)
         {
-            _out.WriteCode("RS "+_rtCall);
+            _out.WriteCode("RS " + _out.GenerateVarName(_rtCall));
             _out.Reserved = false;
         }
 
@@ -641,18 +651,14 @@ namespace CompilerModel.Semantic
         public void AS_EA_ID(Env _environment, Token _tok)
         {
             Symbol _sym = _environment.GetSymbol(_tok);
-            operand_stack.Push(_sym);
 
-            //if (_sym == null)
-            //    throw new Exception("SEMANTIC: var not declared");
+            if (_sym == null)
+                throw new Exception("SEMANTIC: var not declared");
 
-            //_sym.TargetName = _out.GenerateVarName(_sym.Name);
-
-
-            //RealizaOperacaoBoolAritm(_acc, _sym);
+            RealizaOperacaoBoolAritm(_acc, _sym);
 
 
-            //_acc = _sym;
+            _acc = _sym;
 
         }
         /// <summary>
@@ -664,9 +670,16 @@ namespace CompilerModel.Semantic
         public void AS_EA_NUM(Env _environment, Token _tok)
         {
             Symbol _sym = new Symbol(_tok);
-            _out.WriteVarArea("N" + Convert.ToString(Convert.ToInt32(_sym.OperationalValue)), "=" + Convert.ToInt32(_sym.OperationalValue));
-            _sym.TargetName = "N" + Convert.ToString(Convert.ToInt32(_sym.OperationalValue));
-            operand_stack.Push(_sym);
+
+            _sym.Type = TYPE_MVN_INT;
+
+            if (_sym == null)
+                throw new Exception("SEMANTIC: var not declared");
+            //declareMVNNumber(_sym);
+            RealizaOperacaoBoolAritmNumerico(_acc, _sym);
+
+            _acc = _sym;
+
         }
 
         public void AS_EA_3(Env _environment, Token _tok)
@@ -681,41 +694,28 @@ namespace CompilerModel.Semantic
 
         public void AS_EA_EXPONENCIAL(Env _environment, Token _tok)
         {
-            operator_stack.Push(new Symbol(_tok));
+            _acc.Token = _tok;
         }
 
         public void AS_EA_MULTI(Env _environment, Token _tok)
         {
-            operator_stack.Push(new Symbol(_tok));
-            //TO DO: Implement Exponencial resolution
+            _acc.Token = _tok;
         }
 
         public void AS_EA_DIVISAO(Env _environment, Token _tok)
         {
-            operator_stack.Push(new Symbol(_tok));
-            //TO DO: Implement Exponencial resolution
+            _acc.Token = _tok;
         }
 
         public void AS_EA_SUBTRACAO(Env _environment, Token _tok)
         {
-            Symbol sym = new Symbol(_tok);
-            if (operator_stack.First != null)
-                if (((Symbol)operator_stack.First).Token.Equals(new Token("*")) || ((Symbol)operator_stack.First).Token.Equals(new Token("/")))
-                {
-                    RealizaOperacaoNaPilha();
-                }
-            operator_stack.Push(sym);
+            //_out.WriteCommentedCode("LD " + _accumulator.TargetName, "AS_EA_SUBTRACAO");
+            _acc.Token = _tok;
         }
 
         public void AS_EA_SOMA(Env _environment, Token _tok)
         {
-            Symbol sym = new Symbol(_tok);
-            if (operator_stack.First != null)
-                if (((Symbol)operator_stack.First).Token.Equals(new Token("*")) || ((Symbol)operator_stack.First).Token.Equals(new Token("/")))
-                {
-                    RealizaOperacaoNaPilha();
-                }
-            operator_stack.Push(sym);
+            _acc.Token = _tok;
         }
 
         public void AS_EA_15(Env _environment, Token _tok)
@@ -783,9 +783,9 @@ namespace CompilerModel.Semantic
             _typeBoolOper = (int)BoolOperator.MAIOR;
             if (_acc.Type == TYPE_MVN_INT) //verifica se eh do tipo INT
             {
-                _acc = new Symbol();
-                _acc.Token = _tok;
-                _out.WriteCode("MM "+ REG1, "AS_EB_MAIOR");
+                _acc = new Symbol(_tok);
+                //_acc.Token = _tok;
+                _out.WriteCode("MM " + REG1, "AS_EB_MAIOR");
             }
             else
             {
@@ -795,11 +795,11 @@ namespace CompilerModel.Semantic
 
         public void AS_EB_MENOR(Env _environment, Token _tok)
         {
-            _typeBoolOper = (int)BoolOperator.MENOR;
+            _typeBoolOper = BoolOperator.MENOR;
             if (_acc.Type == TYPE_MVN_INT) //verifica se eh do tipo INT
             {
-                _acc = new Symbol();
-                _acc.Token = _tok;
+                _acc = new Symbol(_tok);
+                //_acc.Token = _tok;
             }
             else
             {
@@ -809,11 +809,11 @@ namespace CompilerModel.Semantic
 
         public void AS_EB_MAIORIQUAL(Env _environment, Token _tok)
         {
-            _typeBoolOper = (int)BoolOperator.MAIORIGUAL;
+            _typeBoolOper = BoolOperator.MAIORIGUAL;
             if (_acc.Type == TYPE_MVN_INT) //verifica se eh do tipo INT
             {
-                _acc = new Symbol();
-                _acc.Token = _tok;
+                _acc = new Symbol(_tok);
+                //_acc.Token = _tok;
             }
             else
             {
@@ -823,11 +823,11 @@ namespace CompilerModel.Semantic
 
         public void AS_EB_MENORIQUAL(Env _environment, Token _tok)
         {
-            _typeBoolOper = (int)BoolOperator.MAIORIGUAL;
+            _typeBoolOper = BoolOperator.MAIORIGUAL;
             if (_acc.Type == TYPE_MVN_INT) //verifica se eh do tipo INT
             {
-                _acc = new Symbol();
-                _acc.Token = _tok;
+                _acc = new Symbol(_tok);
+                //_acc.Token = _tok;
             }
             else
             {
@@ -837,16 +837,16 @@ namespace CompilerModel.Semantic
 
         public void AS_EB_IGUAL(Env _environment, Token _tok)
         {
-            _typeBoolOper = (int)BoolOperator.IGUAL;
-            _acc = new Symbol();
-            _acc.Token = _tok;
+            _typeBoolOper = BoolOperator.IGUAL;
+            _acc = new Symbol(_tok);
+            //_acc.Token = _tok;
         }
 
         public void AS_EB_DIFERENTE(Env _environment, Token _tok)
         {
-            _typeBoolOper = (int)BoolOperator.DIFERENTE;
-            _acc = new Symbol();
-            _acc.Token = _tok;
+            _typeBoolOper = BoolOperator.DIFERENTE;
+            _acc = new Symbol(_tok);
+            //_acc.Token = _tok;
         }
 
         public void AS_EB_11(Env _environment, Token _tok)
@@ -907,7 +907,7 @@ namespace CompilerModel.Semantic
             if (((Word)_tok).Lexeme == TYPE_MVN_INT)
             {
                 _acc.Type = TYPE_MVN_INT;
-                _sizeVAR=2;
+                _sizeVAR = 2;
             }
             else if (((Word)_tok).Lexeme == TYPE_MVN_FLOAT)
             {
@@ -933,7 +933,7 @@ namespace CompilerModel.Semantic
 
         public void AS_TIPO_ARRAY(Env _environment, Token _tok)
         {
-            
+
             _acc.Type += "[";
         }
 
@@ -1017,51 +1017,66 @@ namespace CompilerModel.Semantic
 
         private void resultado_booleano(string _comment)
         {
+            string LABELFALSE = string.Empty;
+
+            if (_typeCMD == CommandType.COND)
+                LABELFALSE = LABELENDIF + ifCount;
+            else if (_typeCMD == CommandType.COND)
+                LABELFALSE = LABELENDLOOP + whileCount;
+
+            string _loadReg1 = "LD " + REG1;
+            string _loadReg2 = "LD " + REG2;
+            string _subReg1 = "- " + REG1;
+            string _subReg2 = "- " + REG2;
+            string _jnfalse = "JN " + LABELFALSE;
+            string _jzfalse = "JZ " + LABELFALSE;
+
+
             switch (_typeBoolOper)
             {
-                case (int)BoolOperator.MAIOR:
+                case BoolOperator.MAIOR:
                     {
-                        _out.WriteCode("LD " + REG1, _comment);
-                        _out.WriteCode("- " + REG2, "COD COMPLEMENTAR BOOLEANO");
-                        _out.WriteCode("JN " + LABELFALSE, "SE FOR MENOR, PULA");
-                        _out.WriteCode("JZ " + LABELFALSE, "SE FOR IGUAL, PULA");
+                        _out.WriteCode(_loadReg1, _comment);
+                        _out.WriteCode(_subReg2, "COD COMPLEMENTAR BOOLEANO");
+                        _out.WriteCode(_jnfalse, "SE FOR MENOR, PULA");
+                        _out.WriteCode(_jzfalse, "SE FOR IGUAL, PULA");
                         break;
                     }
-                case (int)BoolOperator.MENOR:
+                case BoolOperator.MENOR:
                     {
-                        _out.WriteCode("LD " + REG2, _comment);
-                        _out.WriteCode("- " + REG1, "COD COMPLEMENTAR BOOLEANO");
-                        _out.WriteCode("JN " + LABELFALSE, "SE FOR MENOR, PULA");
-                        _out.WriteCode("JZ " + LABELFALSE, "SE FOR IGUAL, PULA");
+                        _out.WriteCode(_loadReg2, _comment);
+                        _out.WriteCode(_subReg1, "COD COMPLEMENTAR BOOLEANO");
+                        _out.WriteCode(_jnfalse, "SE FOR MENOR, PULA");
+                        _out.WriteCode(_jzfalse, "SE FOR IGUAL, PULA");
                         break;
                     }
-                case (int)BoolOperator.MAIORIGUAL:
+                case BoolOperator.MAIORIGUAL:
                     {
-                        _out.WriteCode("LD " + REG2, _comment);
-                        _out.WriteCode("- " + REG1, "COD COMPLEMENTAR BOOLEANO");
-                        _out.WriteCode("JN " + LABELFALSE, "SE FOR MENOR, PULA");
+                        _out.WriteCode(_loadReg1, _comment);
+                        _out.WriteCode(_subReg2, "COD COMPLEMENTAR BOOLEANO");
+                        _out.WriteCode(_jnfalse, "SE FOR MENOR, PULA");
 
                         break;
                     }
-                case (int)BoolOperator.MENORIGUAL:
+                case BoolOperator.MENORIGUAL:
                     {
-                        _out.WriteCode("LD " + REG2, _comment);
-                        _out.WriteCode("- " + REG1, "COD COMPLEMENTAR BOOLEANO");
-                        _out.WriteCode("JN " + LABELFALSE, "SE FOR MENOR, PULA");
+                        _out.WriteCode(_loadReg2, _comment);
+                        _out.WriteCode(_subReg1, "COD COMPLEMENTAR BOOLEANO");
+                        _out.WriteCode(_jnfalse, "SE FOR MENOR, PULA");
                         break;
                     }
-                case (int)BoolOperator.IGUAL:
+                case BoolOperator.IGUAL:
                     {
-                        _out.WriteCode("LD " + REG1, _comment);
+                        _out.WriteCode("IGUALLL" + REG1, "NAO IMPLEMENTADO" + _comment);
                         //_out.WriteCommentedCode("- " + _varReg2, "COD COMPLEMENTAR BOOLEANO");
                         //_out.WriteCommentedCode("JN " + _labelFalse, "SE FOR IGUAL, PULA");
                         break;
                     }
-                case (int)BoolOperator.DIFERENTE:
+                case BoolOperator.DIFERENTE:
                     {
-                        _out.WriteCode("LD " + REG2, _comment);
-                        _out.WriteCode("- " + REG1, "COD COMPLEMENTAR BOOLEANO");
-                        _out.WriteCode("JZ " + LABELFALSE, "SE FOR IGUAL, PULA");
+                        _out.WriteCode(_loadReg2, _comment);
+                        _out.WriteCode(_subReg1, "COD COMPLEMENTAR BOOLEANO");
+                        _out.WriteCode(_jzfalse, "SE FOR IGUAL, PULA");
                         break;
                     }
 
@@ -1245,34 +1260,50 @@ namespace CompilerModel.Semantic
             }
         }
 
-        private void RealizaOperacaoNaPilha()
+        private void declareVariable(Env _environment, Symbol _nome, string _type)
         {
-            string op2 = PopVarName();
-            string op1 = PopVarName();
-            _out.WriteCode("LD " + op1, "Load Value");
-            _out.WriteCode(Char.ConvertFromUtf32(((Symbol)operator_stack.Pop()).Token.tag) + " " + op2, "AS_EA_ID");
-            _out.WriteVarArea("AUX" + _countOperacoes, "/0");
-            _out.WriteCode("MM AUX" + _countOperacoes, "AS_EA_NUM");
-            operand_stack.Push("AUX" + _countOperacoes);
-            _countOperacoes++;
+            Symbol _varName = _nome;
+
+            _varName.Id = ((Word)_varName.Token).Lexeme;
+            _varName.Type = _type; // atribuicao do tipo recebido
+            _varName.TargetName += _out.MemoryLines;
+            _environment.AddSymbol(_varName);
+            _out.WriteVarArea(_varName.TargetName + " K /0");
         }
 
-        private string PopVarName()
+        private string getLabelEndWhile()
         {
-            string op;
-            object oop = operand_stack.Pop();
-            if (oop.GetType() == typeof(String))
-                op = Convert.ToString(oop);
-            else
-                op = Convert.ToString(((Symbol)oop).TargetName);
-            return op;
+            string _labeEndWhile = LABELENDLOOP + whileCount;
+            whileCount--;
+            return _labeEndWhile;
         }
-        private void RealizaOperacaoNaPilhaId(Symbol symbol)
+
+        private string getLabelBeginWhile()
         {
-            //string _codeLoadValue = "LD " + operand_stack.Pop();
-            //_out.WriteCommentedCode(_codeLoadValue, "Load Value");
-            //_out.WriteCommentedCode(Char.ConvertFromUtf32(((Token)operator_stack.Pop()).tag) + " " + operand_stack.Pop(), "AS_EA_ID");
+            whileCount++;
+            return LABELWHILE + whileCount;
         }
+
+        private string getLabelEndif()
+        {
+            string _labeEndIf = LABELENDIF + ifCount;
+            ifCount--;
+            return _labeEndIf;
+        }
+
+        private string getLabelBeginIf()
+        {
+            ifCount++;
+            return LABELBEGINIF + ifCount;
+        }
+
+        private void declareMVNNumber(Symbol _sym)
+        {
+            _out.WriteVarArea("N" + (string)_sym.OperationalValue + " K /0");
+        }
+
+
 
     }
+
 }

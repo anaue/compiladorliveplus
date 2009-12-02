@@ -76,12 +76,16 @@ namespace CompilerModel.Semantic
 
         public void SaveFile()
         {
+            if ( _pathName.Contains('\\') || _pathName.Contains('/'))
+            {
             string directoryName = Path.GetDirectoryName(_pathName);
             if (!Directory.Exists(directoryName))
                 Directory.CreateDirectory(directoryName);
+            }
             _writer = new StreamWriter(_pathName, false, Encoding.Default);
             _writer.Write(_memoryArea.ToString() + "\t\t@ /" + (2 * (MemoryLines+1)).ToString("X") + _writer.NewLine + _codeArea.ToString() + _reservedArea.ToString());
             _writer.Close();
+        
         }
 
         public override string ToString()

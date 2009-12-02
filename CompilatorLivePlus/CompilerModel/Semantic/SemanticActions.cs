@@ -391,7 +391,7 @@ namespace CompilerModel.Semantic
             }
             _reg1 = null;
 
-            _out.WriteCode("@ /" + (2 * _out.MemoryLines + 1).ToString("X"), "area de programa");
+            //_out.WriteCode("@ /" + (2 * _out.MemoryLines + 1).ToString("X"), "area de programa");
             _out.SetLabelCode("INICIO");
         }
 

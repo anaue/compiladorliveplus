@@ -1,0 +1,1 @@
+O projeto do compilador envolve a criação de uma linguagem e do compilador para essa linguagem
